@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.0.9
+# version 1.1.0
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
