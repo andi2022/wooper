@@ -12,6 +12,7 @@ Some inspiration through [Kneckter](https://github.com/Kneckter) and his [versio
 - Updating Exeggcute and PoGo
 - Monitoring script
 - Status messages as Discord Webhook
+- Change worker count global for all devices
 # NGINX Setup
 
 Setup a internal server block with autoindex to be able to download the files for update. By using the internal IP address of the server, it will only be accessible to devices on the same network.
