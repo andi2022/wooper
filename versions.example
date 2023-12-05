@@ -1,0 +1,19 @@
+pogo=0.291.2
+exeggcute=3.0.111
+discord_webhook="Your_webhock_url"
+
+# Settings for worker count
+globalworkers=true
+workerscount=6
+
+# Settings for wooper monitor script
+useMonitor=true
+monitor_interval=300
+update_check_interval=3600
+debug=false
+
+# Settings for Monitor Webhooks
+recreate_exeggcute_config=true
+exeggcute_died=true
+pogo_died=true
+pogo_not_focused=true

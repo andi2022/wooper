@@ -1,0 +1,10 @@
+#!/system/bin/sh
+# version 1.0
+
+#Create logfile
+if [ ! -e /data/local/tmp/wooper.log ] ;then
+    touch /data/local/tmp/wooper.log
+fi
+
+echo "`date +%Y-%m-%d_%T` Starting crond" >> /data/local/tmp/wooper.log
+crond -b -c /data/crontabs

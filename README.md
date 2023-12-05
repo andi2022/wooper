@@ -1,0 +1,142 @@
+# Wooper
+
+This tool is meant to let you easily maintain new ATVs (both 32bits and 64bits) to Unown stack and Exeggcute.
+
+It will automatically take care of keeping your devices up to date when a new version of Exeggcute and/or PoGo is required in the future.
+The script will automatically check those versions on every reboot of an ATV.  If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
+
+Codebase
+Wooper's codebase is [aconf](https://github.com/TechG3n/aconf) which is initialy developed by [dkmur](https://github.com/dkmur) and now maintained through [TechG3n](https://github.com/TechG3n).
+Some inspiration through [Kneckter](https://github.com/Kneckter) and his [version](https://github.com/Kneckter/aconf-rdm).
+# Features
+- Updating Exeggcute and PoGo
+- Monitoring script
+- Status messages as Discord Webhook
+# NGINX Setup
+
+Setup a internal server block with autoindex to be able to download the files for update. By using the internal IP address of the server, it will only be accessible to devices on the same network.
+```
+server {
+    listen 8099;
+    server_name 192.168.1.2;
+
+    location / {
+        root /var/www/html/gcconf;
+        autoindex on;
+    }
+}
+```
+***OPTIONAL BUT HIGHLY RECOMMANDED :***
+The script allows you to add an `authUser` and `authPass`. Those user and passwords will be used if basic auth has been enabled on your directory. 
+Please remember this directory contains important information such as your Exeggcute API key or Unown stack auth.
+Refer to this documentation on how to enable basic auth for nginx : https://ubiq.co/tech-blog/how-to-password-protect-directory-in-nginx/
+
+
+The directory should contain the following files :
+
+- The APK of the latest version of Exeggcute
+- The APK of the 32bits version of PoGo matching your version of Exeggcute
+- The APK of the 64bits version of PoGo matching your version of Exeggcute
+- The Exeggcute config file (to be described hereunder)
+- A version file (to be described hereunder)
+
+
+Hers is a typical example of directory content :
+
+```
+com.exeggcute.launcher_v3.0.111.apk
+pokemongo_arm64-v8a_0.291.2.apk
+pokemongo_armeabi-v7a_0.291.2.apk
+config.json
+versions
+```
+Please note the naming convention for the different files, this is important and shouldn't be changed.
+
+Here is the content of the `config.json` file :
+
+```
+{
+    "api_key": "<your_exeggcute_api_key>",
+    "device_name": "dummy",
+    "rotom_url": "ws://<rotom_url>",
+    "rotom_secret": "<rotom_secret>",
+    "workers_count": 6
+}
+```
+Please note that `"device_name":"dummy"` should not be changed. The script will automatically replace this dummy value with the one defined below.
+
+Here is the content of the `versions` file:
+```
+pogo=0.291.2
+exeggcute=3.0.111
+discord_webhook="Your_webhock_url"
+
+# Settings for worker count
+globalworkers=true
+workerscount=6
+
+# Settings for Wooper monitor script
+useMonitor=true
+monitor_interval=300
+update_check_interval=3600
+debug=false
+
+# Settings for Monitor Webhooks
+recreate_exeggcute_config=true
+exeggcute_died=true
+pogo_died=true
+pogo_not_focused=true
+
+```
+The script will automatically check those versions. If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
+# Tested ATV Devices/ROM's
+- X96 Mini (S905w) / a95xf1 (S905w) PoGoRom 1.5
+- TX9S (S912) cs5 + init.d fix*
+
+That Wooper will do the job you need a working init.d implementation on the used Android ROM.
+The cs5 image don't is reliable with the most init.d enabler. In my other repository i have a dirty working sollution for this.
+https://github.com/andi2022/magisk_initd_service
+# Installation
+ - This setup assumes the device has been imaged and rooted already.
+ - Connecting to the device using ADB `adb connect xxx.xxx.xxx.xxx` where the X's are replaced with the device's IP address.
+ - Using the following commands to create the wooper_download and wooper.sh files
+   - Change the `url`, `authUser`, and `authPass` to the values used for NGINX
+   - Change `DeviceName` to the name you want on this device
+```
+su -c 'file='/data/local/wooper_download' && \
+mount -o remount,rw / && \
+touch $file && \
+echo url=
+https://mydownloadfolder.com > $file && \
+echo authUser='aconf' >> $file && \
+echo authPass='atv' >> $file && \
+echo device123 > /data/local/initDName && \
+/system/bin/curl -L -o /system/bin/wooper.sh -k -s https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh && \
+chmod +x /system/bin/wooper.sh && \
+/system/bin/wooper.sh -iw'
+```
+ - If the script finishes successfuly and the device reboots, you can `adb disconnect` from it.
+
+Logs are created in the folder: /data/local/tmp/
+wooper.log
+wooper_monitor.log
+# Remove Wooper
+If you will remove Wooper you need to delete the following files. For some files you need to mount the volume with read / write.
+```
+/data/crontabs/root
+/data/local/wooper_download
+/data/local/wooper_versions
+/data/local/tmp/config.json
+/data/local/tmp/wooper.log
+/data/local/tmp/wooper_monitor.log
+/sdcard/Download/exeggcute.apk
+/sdcard/Download/pogo.apk
+/system/bin/wooper.sh
+/system/bin/wooper_new.sh
+/system/bin/wooper_monitor.sh
+/system/bin/ping_test.sh
+/system/etc/init.d/55cron
+/system/etc/init.d/55wooper
+```
+# Funfact
+I have called the script Wooper because the Pokémon have an inverted WiFi symbol on his belly. :-)

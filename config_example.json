@@ -1,0 +1,7 @@
+{
+    "api_key": "<your_exeggcute_api_key>",
+    "device_name": "dummy",
+    "rotom_url": "ws://<rotom_url>",
+    "rotom_secret": "<rotom_secret>",
+    "workers_count": 6
+}
