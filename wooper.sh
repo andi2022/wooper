@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.0
+# version 1.2.1
 
 #Version checks
 Ver55wooper="1.0"
@@ -24,7 +24,9 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
+if [[ -f $wooper_versions ]] ;then
 discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
 if [[ -z $discord_webhook ]] ;then
   discord_webhook=$(grep discord_webhook /data/local/wooper_download | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 fi
@@ -86,7 +88,7 @@ mount_system_ro() {
 
 install_wooper(){
 # download latest version file
-until $download $wooper_versions $wooper_download/versions || { echo "`date +%Y-%m-%d_%T` $download $wooper_versions $wooper_download/versions" >> $logfile ; logger "Download gocheats versions file failed, exit script" ; exit 1; } ;do
+until $download $wooper_versions $wooper_download/versions || { echo "`date +%Y-%m-%d_%T` $download $wooper_versions $wooper_download/versions" >> $logfile ; echo "Download wooper versions file failed, exit script" >> $logfile ; exit 1; } ;do
     sleep 2
 done
 dos2unix $wooper_versions
