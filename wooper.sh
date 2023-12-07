@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.1
+# version 1.2.2
 
 #Version checks
 Ver55wooper="1.0"
@@ -57,7 +57,7 @@ fi
 
 reboot_device(){
     echo "`date +%Y-%m-%d_%T` Reboot device" >> $logfile
-    sleep 5
+    sleep 15
     /system/bin/reboot
 }
 
@@ -154,9 +154,8 @@ fi
     logger "exeggcute installed"
 
     # Grant su access + settings
-    guid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
-    magisk --sqlite "DELETE from policies WHERE package_name='com.gocheats.launcher'"
-    magisk --sqlite "INSERT INTO policies (uid,package_name,policy,until,logging,notification) VALUES($guid,'com.gocheats.launcher',2,0,1,0)"
+	euid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
+	magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
     /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
     /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
     logger "exeggcute granted su"
@@ -229,7 +228,7 @@ update_all(){
      echo "`date +%Y-%m-%d_%T` workers count ok or not enabled" >> $logfile
     fi
 
-    if [ ! -z "$exeggcute_install" ] && [ ! -z "$pogo_install" ] && [ ! -z "$emagisk_install" ] ;then
+    if [ ! -z "$exeggcute_install" ] && [ ! -z "$pogo_install" ] ;then
       echo "`date +%Y-%m-%d_%T` All updates checked and downloaded if needed" >> $logfile
       if [ "$exeggcute_install" = "install" ] ;then
         logger "Start updating exeggcute"
@@ -242,9 +241,8 @@ update_all(){
         /system/bin/rm -f /sdcard/Download/exeggcute.apk
 
 		# Grant su access + settings after reinstall
-		guid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
-        magisk --sqlite "DELETE from policies WHERE package_name='com.gocheats.launcher'"
-        magisk --sqlite "INSERT INTO policies (uid,package_name,policy,until,logging,notification) VALUES($guid,'com.gocheats.launcher',2,0,1,0)"
+		euid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
+		magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
         /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
         /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
         logger "exeggcute config installed"
@@ -266,7 +264,7 @@ update_all(){
         logger "PoGo $pversions, launcher started"
         reboot=1
       fi
-      if [ "$exeggcute_install" != "install" ] && [ "$pogo_install" != "install" ] && [ "$emagisk_install" != "install" ] ; then
+      if [ "$exeggcute_install" != "install" ] && [ "$pogo_install" != "install" ] ; then
         echo "`date +%Y-%m-%d_%T` Updates checked, nothing to install" >> $logfile
       fi
     fi
