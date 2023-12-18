@@ -1,5 +1,7 @@
 pogo=0.291.2
 exeggcute=3.0.111
+playintegrityfixupdate=true
+playintegrityfixversion=14.5
 discord_webhook="Your_webhock_url"
 
 # Settings for worker count

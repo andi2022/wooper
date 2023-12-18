@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.2
+# version 1.3.0
 
 #Version checks
 Ver55wooper="1.0"
@@ -190,6 +190,9 @@ update_all(){
 	globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	workerscount=$(/system/bin/grep 'workerscount' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	exeggcuteworkerscount=$(grep 'workers_count' $exeggcute | sed -r 's/^ [^:]*: ([0-9]+),?$/\1/')
+    playintegrityfixinstalled=$(cat /data/adb/modules/playintegrityfix/module.prop | /system/bin/grep version | head -n1 | /system/bin/sed 's/ *version=v//')    
+	playintegrityfixupdate=$(/system/bin/grep 'playintegrityfixupdate' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
+	playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 
     if [[ "$pinstalled" != "$pversions" ]] ;then
       logger "New pogo version detected, $pinstalled=>$pversions"
@@ -217,6 +220,19 @@ update_all(){
      echo "`date +%Y-%m-%d_%T` exeggcute already on correct version" >> $logfile
     fi
 
+    if [[ $playintegrityfixupdate == "true" ]] && [ "$playintegrityfixinstalled" != "$playintegrityfixversions" ] ;then
+      logger "New PlayIntegrityFix version detected, $playintegrityfixinstalled=>$playintegrityfixversions"
+      /system/bin/rm -f /sdcard/Download/playintegrityfix.zip
+      until $download /sdcard/Download/playintegrityfix.zip $wooper_download/PlayIntegrityFix_v$playintegrityfixversions.zip || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/playintegrityfix.zip $wooper_download/PlayIntegrityFix_v$playintegrityfixversions.zip" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download PlayIntegrityFix failed, exit script" >> $logfile ; exit 1; } ;do
+        sleep 2
+      done
+	  # set PlayIntegrityFix to be installed
+      playintegrityfix_install="install"
+    else
+     playintegrityfix_install="skip"
+     echo "`date +%Y-%m-%d_%T` PlayIntegrityFix already on correct version or not enabled" >> $logfile
+    fi
+
     if [[ $globalworkers == "true" ]] && [ "$exeggcuteworkerscount" != "$workerscount" ] ;then
       logger "New global workers count detected, $exeggcuteworkerscount=>$workerscount"
 	  sed -i "s/\"workers_count\": [0-9]*/\"workers_count\": $workerscount/" $exeggcute
@@ -228,7 +244,7 @@ update_all(){
      echo "`date +%Y-%m-%d_%T` workers count ok or not enabled" >> $logfile
     fi
 
-    if [ ! -z "$exeggcute_install" ] && [ ! -z "$pogo_install" ] ;then
+    if [ ! -z "$exeggcute_install" ] && [ ! -z "$pogo_install" ] && [ ! -z "$playintegrityfix_install" ] ;then
       echo "`date +%Y-%m-%d_%T` All updates checked and downloaded if needed" >> $logfile
       if [ "$exeggcute_install" = "install" ] ;then
         logger "Start updating exeggcute"
@@ -264,7 +280,14 @@ update_all(){
         logger "PoGo $pversions, launcher started"
         reboot=1
       fi
-      if [ "$exeggcute_install" != "install" ] && [ "$pogo_install" != "install" ] ; then
+	  if [ "$playintegrityfix_install" = "install" ] ;then
+        logger "start updating playintegrityfix"
+        # install playintegrityfix
+        magisk --install-module /sdcard/Download/playintegrityfix.zip
+		/system/bin/rm -f /sdcard/Download/playintegrityfix.zip
+        reboot=1
+      fi
+      if [ "$exeggcute_install" != "install" ] && [ "$pogo_install" != "install" ] && [ "$playintegrityfix_install" != "install" ] ; then
         echo "`date +%Y-%m-%d_%T` Updates checked, nothing to install" >> $logfile
       fi
     fi

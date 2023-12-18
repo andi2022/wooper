@@ -13,6 +13,23 @@ Some inspiration through [Kneckter](https://github.com/Kneckter) and his [versio
 - Monitoring script
 - Status messages as Discord Webhook
 - Change worker count global for all devices
+# Changelog
+```
+1.3.0
+Add PlayIntegrityFix update logic (See version.example)
+1.2.2
+fix exeggcute update, remove orphaned stuff
+1.2.1
+minor fixes
+1.2.0
+wooper public release
+1.1.0 - 1.1.9
+Internal release, implementation wooper_monitor.sh
+1.0.1 - 1.0.11
+Internal release, testing and minor fixes
+1.0.0
+Internal release, reworking gcconf to wooper with support for Exeggcute
+```
 # NGINX Setup
 
 Setup a internal server block with autoindex to be able to download the files for update. By using the internal IP address of the server, it will only be accessible to devices on the same network.
@@ -70,6 +87,8 @@ Here is the content of the `versions` file:
 ```
 pogo=0.291.2
 exeggcute=3.0.111
+playintegrityfixupdate=true
+playintegrityfixversion=14.5
 discord_webhook="Your_webhock_url"
 
 # Settings for worker count
@@ -92,9 +111,10 @@ pogo_not_focused=true
 The script will automatically check those versions. If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
 # Tested ATV Devices/ROM's
 - X96 Mini (S905w) / a95xf1 (S905w) PoGoRom 1.5
-- TX9S (S912) cs5 + init.d fix*
+- TX9S (S912) PoGoRom 1.5.1
 
 That Wooper will do the job you need a working init.d implementation on the used Android ROM.
+I don't recommend to use the cs5 image for the TX9S ATV Devices.
 The cs5 image don't is reliable with the most init.d enabler. In my other repository i have a dirty working sollution for this.
 https://github.com/andi2022/magisk_initd_service
 # Installation
