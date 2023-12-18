@@ -65,6 +65,7 @@ Hers is a typical example of directory content :
 com.exeggcute.launcher_v3.0.111.apk
 pokemongo_arm64-v8a_0.291.2.apk
 pokemongo_armeabi-v7a_0.291.2.apk
+PlayIntegrityFix_v14.5.zip
 config.json
 versions
 ```
