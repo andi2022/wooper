@@ -1,3 +1,4 @@
+
 # Wooper
 
 This tool is meant to let you easily maintain new ATVs (both 32bits and 64bits) to Unown stack and Exeggcute.
@@ -128,10 +129,9 @@ https://github.com/andi2022/magisk_initd_service
 su -c 'file='/data/local/wooper_download' && \
 mount -o remount,rw / && \
 touch $file && \
-echo url=
-https://mydownloadfolder.com > $file && \
-echo authUser='aconf' >> $file && \
-echo authPass='atv' >> $file && \
+echo url=https://mydownloadfolder.com > $file && \
+echo authUser='username' >> $file && \
+echo authPass='password' >> $file && \
 echo device123 > /data/local/initDName && \
 /system/bin/curl -L -o /system/bin/wooper.sh -k -s https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh && \
 chmod +x /system/bin/wooper.sh && \
