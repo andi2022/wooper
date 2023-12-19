@@ -145,11 +145,11 @@ fi
     done
 
     # let us kill pogo as well and clear data
-    /system/bin/am force-stop com.nianticlabs.pokemongo
-    /system/bin/pm clear com.nianticlabs.pokemongo
+    /system/bin/am force-stop com.nianticlabs.pokemongo > /dev/null 2>&1
+    /system/bin/pm clear com.nianticlabs.pokemongo > /dev/null 2>&1
 
     # Install exeggcute
-    /system/bin/pm install -r /sdcard/Download/exeggcute.apk
+    /system/bin/pm install -r /sdcard/Download/exeggcute.apk > /dev/null 2>&1
     /system/bin/rm -f /sdcard/Download/exeggcute.apk
     logger "exeggcute installed"
 
@@ -300,7 +300,7 @@ downgrade_pogo(){
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
       done
-      /system/bin/pm uninstall com.nianticlabs.pokemongo
+      /system/bin/pm uninstall com.nianticlabs.pokemongo > /dev/null 2>&1
       /system/bin/pm install -r /sdcard/Download/pogo.apk
       /system/bin/rm -f /sdcard/Download/pogo.apk
       logger "PoGo installed, now $pversions"
