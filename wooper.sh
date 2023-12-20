@@ -261,10 +261,8 @@ update_all(){
 		magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
         /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
         /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
-        logger "exeggcute config installed"
 		/system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "exeggcute updated, launcher started"
-        reboot=1
       fi
       if [ "$pogo_install" = "install" ] ;then
         logger "Start updating pogo"
@@ -278,7 +276,6 @@ update_all(){
         /system/bin/rm -f /sdcard/Download/pogo.apk
         /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
-        reboot=1
       fi
 	  if [ "$playintegrityfix_install" = "install" ] ;then
         logger "start updating playintegrityfix"
