@@ -15,7 +15,10 @@ Some inspiration through [Kneckter](https://github.com/Kneckter) and his [versio
 - Status messages as Discord Webhook
 - Change worker count global for all devices
 # Changelog
+**wooper script**
 ```
+1.3.1
+No reboot when pogo and exeggcute updates installing, cleanup orphaned logger message, bump version for wooper_monitor.sh update
 1.3.0
 Add PlayIntegrityFix update logic (See version.example)
 1.2.2
@@ -30,6 +33,18 @@ Internal release, implementation wooper_monitor.sh
 Internal release, testing and minor fixes
 1.0.0
 Internal release, reworking gcconf to wooper with support for Exeggcute
+```
+
+**wooper monitor script**
+```
+1.1.1
+No longer restart exeggcute when pogo client is the problem.
+1.1.0
+public release
+1.0.1 - 1.0.9
+Internal release, testing and minor fixes
+1.0.0
+Internal release
 ```
 # NGINX Setup
 
