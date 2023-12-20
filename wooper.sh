@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.3.0
+# version 1.3.1
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.0"
+VerMonitor="1.1.1"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
