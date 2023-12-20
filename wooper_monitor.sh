@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.0
+# version 1.1.1
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -121,9 +121,9 @@ do
 	focusedapp=$(dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d " " -f 7)
     if [ "$focusedapp" != "com.nianticlabs.pokemongo" ]
     then
-        echo "`date +%Y-%m-%d_%T` [MONITORBOT] Something is not right! PoGo is not in focus. Killing exeggcute, PoGo and clearing junk" >> $logfile
-		[[ $pogo_not_focused == "true" ]] && logger "Something is not right! PoGo is not in focus. Killing exeggcute, PoGo and clearing junk."
-		stop_start_exeggcute
+        echo "`date +%Y-%m-%d_%T` [MONITORBOT] Something is not right! PoGo is not in focus. Killing PoGo and clearing junk" >> $logfile
+		[[ $pogo_not_focused == "true" ]] && logger "Something is not right! PoGo is not in focus. Killing PoGo and clearing junk."
+		stop_pogo
         sleep 5
     fi
 
