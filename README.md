@@ -17,6 +17,8 @@ Some inspiration through [Kneckter](https://github.com/Kneckter) and his [versio
 # Changelog
 **wooper script**
 ```
+1.3.2
+Fix wrong variable in logger output for worker count update
 1.3.1
 No reboot when pogo and exeggcute updates installing, cleanup orphaned logger message, bump version for wooper_monitor.sh update
 1.3.0

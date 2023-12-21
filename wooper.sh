@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.1
+# version 1.3.2
 
 #Version checks
 Ver55wooper="1.0"
@@ -236,7 +236,7 @@ update_all(){
     if [[ $globalworkers == "true" ]] && [ "$exeggcuteworkerscount" != "$workerscount" ] ;then
       logger "New global workers count detected, $exeggcuteworkerscount=>$workerscount"
 	  sed -i "s/\"workers_count\": [0-9]*/\"workers_count\": $workerscount/" $exeggcute
-	  logger "New workers count $exeggcuteworkerscount is active, restarting exeggcute"
+	  logger "New workers count $workerscount is active, restarting exeggcute"
 	  am force-stop com.gocheats.launcher
 	  sleep 2
 	  /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
