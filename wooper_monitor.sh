@@ -1,9 +1,19 @@
 #!/system/bin/sh
-# version 1.1.1
+# version 1.1.2
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
 origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
+rotom="$(grep rotom_url $exeggcute | cut -d \" -f 4)"
+rotom_host="$(echo $rotom | cut -d / -f 3 | cut -d : -f 1)"
+rotom_port="$(echo $rotom | cut -d / -f 3 | cut -sd : -f 2)"  # if there is a manual port
+rotom_proto="$(echo $rotom | cut -d : -f 1)"
+if [ -z "$rotom_port" ]; then  # no manual port defined
+	rotom_port=80
+elif [[ "$rotom_proto" == "wss" ]]; then
+	rotom_port=443
+fi
+connection_min=1 # Number of upsteam ws connections to require. 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 updatecheck=0
 
@@ -15,6 +25,7 @@ export update_check_interval
 export debug
 export recreate_exeggcute_config
 export exeggcute_died
+export exeggcute_disconnected
 export pogo_died
 export pogo_not_focused
 
@@ -126,6 +137,14 @@ do
 		stop_pogo
         sleep 5
     fi
+
+	# code for check disconnected state is from jinnatar and his mitm_nanny script (https://github.com/jinnatar/mitm_nanny/tree/main)
+	# Dirty hack to resolve a host where no dns tools are available.
+	rotom_ip="$(ping -c 1 "$rotom_host" | grep PING | cut -d \( -f 2 | cut -d \) -f 1)"
+	if [[ $(ss -pnt | grep pokemongo | grep "${rotom_ip}:${rotom_port}" | wc -l) -lt "$connection_min" ]]; then
+		[[ $exeggcute_disconnected == "true" ]] && logger "exeggcute is disconnected. Let's fix that!"
+		stop_start_exeggcute
+	fi
 
 	sleep $monitor_interval
 done

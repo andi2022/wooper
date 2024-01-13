@@ -9,6 +9,8 @@ The script will automatically check those versions on every reboot of an ATV.  I
 Codebase
 Wooper's codebase is [aconf](https://github.com/TechG3n/aconf) which is initialy developed by [dkmur](https://github.com/dkmur) and now maintained through [TechG3n](https://github.com/TechG3n).
 Some inspiration through [Kneckter](https://github.com/Kneckter) and his [version](https://github.com/Kneckter/aconf-rdm).
+The disconnected check function in the wooper_monitor script is from [jinntar](https://github.com/jinnatar) and his [mitm_nanny](https://github.com/jinnatar/mitm_nanny) script.
+
 # Features
 - Updating Exeggcute and PoGo
 - Monitoring script
@@ -17,6 +19,8 @@ Some inspiration through [Kneckter](https://github.com/Kneckter) and his [versio
 # Changelog
 **wooper script**
 ```
+1.3.3
+new wooper_monitor.sh version
 1.3.2
 Fix wrong variable in logger output for worker count update
 1.3.1
@@ -39,6 +43,9 @@ Internal release, reworking gcconf to wooper with support for Exeggcute
 
 **wooper monitor script**
 ```
+1.1.2
+Add check if exeggcute is disconnected
+code is from jinntar and his mitm_nanny script
 1.1.1
 No longer restart exeggcute when pogo client is the problem.
 1.1.0
@@ -123,6 +130,7 @@ debug=false
 # Settings for Monitor Webhooks
 recreate_exeggcute_config=true
 exeggcute_died=true
+exeggcute_disconnected=true
 pogo_died=true
 pogo_not_focused=true
 

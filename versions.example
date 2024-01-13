@@ -17,5 +17,6 @@ debug=false
 # Settings for Monitor Webhooks
 recreate_exeggcute_config=true
 exeggcute_died=true
+exeggcute_disconnected=true
 pogo_died=true
 pogo_not_focused=true
