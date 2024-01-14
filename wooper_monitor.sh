@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.3
+# version 1.1.4
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -126,7 +126,7 @@ do
         echo "`date +%Y-%m-%d_%T` [MONITORBOT] exeggcute is not running. Let's fix that!" >> $logfile
 		[[ $exeggcute_died == "true" ]] && logger "exeggcute is not running. Let's fix that!"
 		stop_start_exeggcute
-        sleep 20
+        sleep 60
     fi
 
 	focusedapp=$(dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d " " -f 7)

@@ -1,4 +1,3 @@
-
 # Wooper
 
 This tool is meant to let you easily maintain new ATVs (both 32bits and 64bits) to Unown stack and Exeggcute.
@@ -47,6 +46,8 @@ Internal release, reworking gcconf to wooper with support for Exeggcute
 
 **wooper monitor script**
 ```
+1.1.4
+increase wait time after fix for death exeggcute
 1.1.3
 increase wait time after fix command 
 1.1.2
