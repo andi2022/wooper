@@ -19,6 +19,10 @@ The disconnected check function in the wooper_monitor script is from [jinntar](h
 # Changelog
 **wooper script**
 ```
+1.3.5
+new wooper_monitor.sh version 1.1.3
+1.3.4
+forgot increase wooper_monitor.sh version number
 1.3.3
 new wooper_monitor.sh version
 1.3.2
@@ -43,6 +47,8 @@ Internal release, reworking gcconf to wooper with support for Exeggcute
 
 **wooper monitor script**
 ```
+1.1.3
+increase wait time after fix command 
 1.1.2
 Add check if exeggcute is disconnected
 code is from jinntar and his mitm_nanny script

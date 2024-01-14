@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.2
+# version 1.1.3
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -126,7 +126,7 @@ do
         echo "`date +%Y-%m-%d_%T` [MONITORBOT] exeggcute is not running. Let's fix that!" >> $logfile
 		[[ $exeggcute_died == "true" ]] && logger "exeggcute is not running. Let's fix that!"
 		stop_start_exeggcute
-        sleep 5
+        sleep 20
     fi
 
 	focusedapp=$(dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d " " -f 7)
@@ -135,7 +135,7 @@ do
         echo "`date +%Y-%m-%d_%T` [MONITORBOT] Something is not right! PoGo is not in focus. Killing PoGo and clearing junk" >> $logfile
 		[[ $pogo_not_focused == "true" ]] && logger "Something is not right! PoGo is not in focus. Killing PoGo and clearing junk."
 		stop_pogo
-        sleep 5
+        sleep 20
     fi
 
 	# code for check disconnected state is from jinnatar and his mitm_nanny script (https://github.com/jinnatar/mitm_nanny/tree/main)
@@ -144,6 +144,7 @@ do
 	if [[ $(ss -pnt | grep pokemongo | grep "${rotom_ip}:${rotom_port}" | wc -l) -lt "$connection_min" ]]; then
 		[[ $exeggcute_disconnected == "true" ]] && logger "exeggcute is disconnected. Let's fix that!"
 		stop_start_exeggcute
+		sleep 20
 	fi
 
 	sleep $monitor_interval
