@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.4
+# version 1.1.5
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -57,6 +57,7 @@ fi
 check_for_updates() {
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Checking for updates" >> $logfile
 	/system/bin/wooper.sh -ua
+	sleep 20
 }
 
 stop_start_exeggcute () {
@@ -113,11 +114,13 @@ do
 	# Check if the logcat contains a mismatch game version.
 	if echo "$log_output" | grep -q "Mismatching game version!"; then
 		logger "Mismatching game version detected"
+		logcat -c
 	fi
 
 	# Check if the logcat contains a License validation error
 	if echo "$log_output" | grep -q "License validation failed!"; then
 		logger "License Validation error found"
+		logcat -c
 	fi
 
     # Check if exeggcute is not running
