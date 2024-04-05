@@ -18,6 +18,8 @@ The disconnected check function in the wooper_monitor script is from [jinntar](h
 # Changelog
 **wooper script**
 ```
+1.3.9
+fix 1 keyevent
 1.3.8
 dirty fix for pink screen
 1.3.6
