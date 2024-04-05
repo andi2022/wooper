@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.9
+# version 1.3.10
 
 #Version checks
 Ver55wooper="1.0"
@@ -307,6 +307,13 @@ downgrade_pogo(){
       /system/bin/pm install -r /sdcard/Download/pogo.apk
       /system/bin/rm -f /sdcard/Download/pogo.apk
       logger "PoGo installed, now $pversions"
+      /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+	  sleep 45
+	  input keyevent 61
+	  sleep 2
+	  input keyevent 61
+	  sleep 2
+	  input keyevent 23
     else
       echo "`date +%Y-%m-%d_%T` pogo version correct, proceed" >> $logfile
     fi
