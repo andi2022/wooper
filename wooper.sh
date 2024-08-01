@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.11
+# version 1.3.12
 
 #Version checks
 Ver55wooper="1.0"
@@ -346,7 +346,7 @@ if [[ $(basename $0) != "wooper_new.sh" ]] ;then
     chmod +x /system/bin/wooper_new.sh
     newsh=$(head -2 /system/bin/wooper_new.sh | /system/bin/grep '# version' | awk '{ print $NF }')
     if [[ "$oldsh" != "$newsh" ]] ;then
-        logger "wooper.sh updated $oldsh=>$newsh, restarting script"
+        logger "wooper.sh updated $oldsh=>$newsh | Github branch $branch, restarting script"
         cp /system/bin/wooper_new.sh /system/bin/wooper.sh
         mount_system_ro
         /system/bin/wooper_new.sh $@
@@ -383,7 +383,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
         chmod +x /system/etc/init.d/55wooper
         mount_system_ro
         new55=$(head -2 /system/etc/init.d/55wooper | /system/bin/grep '# version' | awk '{ print $NF }')
-        logger "55wooper updated $old55=>$new55"
+        logger "55wooper updated $old55=>$new55 | Github branch $branch"
     fi
 fi
 
@@ -411,7 +411,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
 		crond -b -c /data/crontabs		
         mount_system_ro
         new55=$(head -2 /system/etc/init.d/55cron | /system/bin/grep '# version' | awk '{ print $NF }')
-        logger "55cron updated $old55=>$new55"
+        logger "55cron updated $old55=>$new55 | Github branch $branch"
     fi
 fi
 
@@ -426,7 +426,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
     chmod +x /system/bin/wooper_monitor.sh
     mount_system_ro
     newMonitor=$(head -2 /system/bin/wooper_monitor.sh | grep '# version' | awk '{ print $NF }')
-	logger "wooper monitor updated $oldMonitor => $newMonitor"
+	logger "wooper monitor updated $oldMonitor => $newMonitor | Github branch $branch"
 	
     # restart wooper monitor
     if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f /system/bin/wooper_monitor.sh ] ;then
