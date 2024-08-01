@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.10
+# version 1.3.11
 
 #Version checks
 Ver55wooper="1.0"
@@ -29,6 +29,12 @@ discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print 
 fi
 if [[ -z $discord_webhook ]] ;then
   discord_webhook=$(grep discord_webhook /data/local/wooper_download | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+
+#Scriptbrach
+branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+if [[ -z $branch ]] ;then
+  branch=main
 fi
 
 # stderr to logfile
@@ -103,21 +109,21 @@ fi
 
     # install 55wooper
 	mount_system_rw
-	until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55wooper https://raw.githubusercontent.com/andi2022/wooper/main/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
+	until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55wooper https://raw.githubusercontent.com/andi2022/wooper/$branch/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/etc/init.d/55wooper
     logger "55wooper installed"
 
     # install 55cron
-    until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/andi2022/wooper/main/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/andi2022/wooper/$branch/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/etc/init.d/55cron
     logger "55cron installed"
 
     # install cron job
-    until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/main/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/bin/ping_test.sh
@@ -128,7 +134,7 @@ fi
 	logger "cron jobs installed"
 
 	# install wooper monitor
-	until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/main/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+	until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
 		sleep 2
 	done
 	chmod +x /system/bin/wooper_monitor.sh
@@ -334,7 +340,7 @@ sleep 30
 if [[ $(basename $0) != "wooper_new.sh" ]] ;then
     mount_system_rw
     oldsh=$(head -2 /system/bin/wooper.sh | /system/bin/grep '# version' | awk '{ print $NF }')
-    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_new.sh https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/bin/wooper_new.sh
@@ -371,7 +377,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
     old55=$(head -2 /system/etc/init.d/55wooper | /system/bin/grep '# version' | awk '{ print $NF }')
     if [ "$Ver55wooper" != "$old55" ] ;then
         mount_system_rw
-        until /system/bin/curl -s -k -L --fail --show-error -o /system/etc/init.d/55wooper https://raw.githubusercontent.com/andi2022/wooper/main/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o /system/etc/init.d/55wooper https://raw.githubusercontent.com/andi2022/wooper/$branch/55wooper || { echo "`date +%Y-%m-%d_%T` Download 55wooper failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/etc/init.d/55wooper
@@ -388,14 +394,14 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
         mount_system_rw
 
         # install 55cron
-        until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/andi2022/wooper/main/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o  /system/etc/init.d/55cron https://raw.githubusercontent.com/andi2022/wooper/$branch/55cron || { echo "`date +%Y-%m-%d_%T` Download 55cron failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/etc/init.d/55cron
         echo "`date +%Y-%m-%d_%T` 55cron installed, from master" >> $logfile
 
         # install cron job
-        until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/main/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/bin/ping_test.sh
@@ -414,7 +420,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
   [ -f /system/bin/wooper_monitor.sh ] && oldMonitor=$(head -2 /system/bin/wooper_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
   if [ $VerMonitor != $oldMonitor ] ;then
     mount_system_rw
-    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/main/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
     chmod +x /system/bin/wooper_monitor.sh
