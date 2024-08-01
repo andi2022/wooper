@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.10
+# version 1.3.11
 
 #Version checks
 Ver55wooper="1.0"
