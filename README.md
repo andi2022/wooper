@@ -18,6 +18,10 @@ The disconnected check function in the wooper_monitor script is from [jinntar](h
 # Changelog
 **wooper script**
 ```
+1.4.0
+increase version for publishing to main branch. Support for changing branches.
+1.3.12
+added branch logging when some component is updated
 1.3.11
 added basic support to change github branch for develpment and testing
 1.3.10
