@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.1
+# version 1.4.2
 
 #Version checks
 Ver55wooper="1.0"
@@ -25,6 +25,8 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
+
+read_versionfile(){
 if [[ -f $wooper_versions ]] ;then
 discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 fi
@@ -37,7 +39,9 @@ branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's
 if [[ -z $branch ]] ;then
   branch=main
 fi
+}
 
+read_versionfile
 #Overwrite branch with a local config file for testing on a single device
 if [ -e "$branchoverwrite" ]; then
     branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
@@ -98,13 +102,29 @@ mount_system_ro() {
   fi
 }
 
-install_wooper(){
+download_versionfile() {
+# verify download credential file and set download
+if [[ ! -f /data/local/wooper_download ]] ;then
+    echo "`date +%Y-%m-%d_%T` File /data/local/wooper_download not found, exit script" >> $logfile && exit 1
+else
+    if [[ $wooper_user == "" ]] ;then
+        download="/system/bin/curl -s -k -L --fail --show-error -o"
+    else
+        download="/system/bin/curl -s -k -L --fail --show-error --user $wooper_user:$wooper_pass -o"
+    fi
+fi
+
 # download latest version file
-until $download $wooper_versions $wooper_download/versions || { echo "`date +%Y-%m-%d_%T` $download $wooper_versions $wooper_download/versions" >> $logfile ; echo "Download wooper versions file failed, exit script" >> $logfile ; exit 1; } ;do
+until $download $wooper_versions $wooper_download/versions || { echo "`date +%Y-%m-%d_%T` $download $wooper_versions $wooper_download/versions" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download gocheats versions file failed, exit script" >> $logfile ; exit 1; } ;do
     sleep 2
 done
 dos2unix $wooper_versions
 echo "`date +%Y-%m-%d_%T` Downloaded latest versions file"  >> $logfile
+read_versionfile
+}
+
+install_wooper(){
+download_versionfile
 
 # search discord webhook url for install log
 discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
@@ -199,12 +219,12 @@ update_all(){
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.gocheats.launcher | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     exeggcuteversions=$(/system/bin/grep 'exeggcute' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
-	globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
-	workerscount=$(/system/bin/grep 'workerscount' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
-	exeggcuteworkerscount=$(grep 'workers_count' $exeggcute | sed -r 's/^ [^:]*: ([0-9]+),?$/\1/')
+	  globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+	  workerscount=$(/system/bin/grep 'workerscount' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+	  exeggcuteworkerscount=$(grep 'workers_count' $exeggcute | sed -r 's/^ [^:]*: ([0-9]+),?$/\1/')
     playintegrityfixinstalled=$(cat /data/adb/modules/playintegrityfix/module.prop | /system/bin/grep version | head -n1 | /system/bin/sed 's/ *version=v//')    
-	playintegrityfixupdate=$(/system/bin/grep 'playintegrityfixupdate' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
-	playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+	  playintegrityfixupdate=$(/system/bin/grep 'playintegrityfixupdate' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
+	  playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 
     if [[ "$pinstalled" != "$pversions" ]] ;then
       logger "New pogo version detected, $pinstalled=>$pversions"
@@ -341,6 +361,7 @@ echo "`date +%Y-%m-%d_%T` Internet connection available" >> $logfile
 echo "`date +%Y-%m-%d_%T` Wait 30 seconds, safety delay" >> $logfile
 sleep 30
 
+download_versionfile
 
 #download latest wooper.sh
 if [[ $(basename $0) != "wooper_new.sh" ]] ;then
@@ -359,24 +380,6 @@ if [[ $(basename $0) != "wooper_new.sh" ]] ;then
         exit 1
     fi
 fi
-
-# verify download credential file and set download
-if [[ ! -f /data/local/wooper_download ]] ;then
-    echo "`date +%Y-%m-%d_%T` File /data/local/wooper_download not found, exit script" >> $logfile && exit 1
-else
-    if [[ $wooper_user == "" ]] ;then
-        download="/system/bin/curl -s -k -L --fail --show-error -o"
-    else
-        download="/system/bin/curl -s -k -L --fail --show-error --user $wooper_user:$wooper_pass -o"
-    fi
-fi
-
-# download latest version file
-until $download $wooper_versions $wooper_download/versions || { echo "`date +%Y-%m-%d_%T` $download $wooper_versions $wooper_download/versions" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download gocheats versions file failed, exit script" >> $logfile ; exit 1; } ;do
-    sleep 2
-done
-dos2unix $wooper_versions
-echo "`date +%Y-%m-%d_%T` Downloaded latest versions file"  >> $logfile
 
 #update 55wooper if needed
 if [[ $(basename $0) = "wooper_new.sh" ]] ;then
