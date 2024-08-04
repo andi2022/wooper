@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.4
+# version 1.4.5
 
 #Version checks
 Ver55wooper="1.0"
@@ -195,8 +195,8 @@ fi
     done
 
     # let us kill pogo as well and clear data
-    /system/bin/am force-stop com.nianticlabs.pokemongo > /dev/null 2>&1
-    /system/bin/pm clear com.nianticlabs.pokemongo > /dev/null 2>&1
+    /system/bin/am force-stop $pogo_package > /dev/null 2>&1
+    /system/bin/pm clear $pogo_package > /dev/null 2>&1
 
     # Install exeggcute
     /system/bin/pm install -r /sdcard/Download/exeggcute.apk > /dev/null 2>&1
@@ -233,7 +233,7 @@ install_config(){
 }
 
 update_all(){
-    pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
+    pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.gocheats.launcher | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     exeggcuteversions=$(/system/bin/grep 'exeggcute' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
@@ -318,9 +318,9 @@ update_all(){
         logger "Start updating pogo"
         # install pogo
         am force-stop com.gocheats.launcher
-		am force-stop com.nianticlabs.pokemongo
+		am force-stop $pogo_package
 		sleep 2
-		pm uninstall com.nianticlabs.pokemongo
+		pm uninstall $pogo_package
 		sleep 2
         /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
         /system/bin/rm -f /sdcard/Download/pogo.apk
@@ -347,13 +347,13 @@ update_all(){
 }
 
 downgrade_pogo(){
-    pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
+    pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     if [[ "$pinstalled" != "$pversions" ]] ;then
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
       done
-      /system/bin/pm uninstall com.nianticlabs.pokemongo > /dev/null 2>&1
+      /system/bin/pm uninstall $pogo_package > /dev/null 2>&1
       /system/bin/pm install -r /sdcard/Download/pogo.apk
       /system/bin/rm -f /sdcard/Download/pogo.apk
       logger "PoGo installed, now $pversions"
