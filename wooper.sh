@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.5
+# version 1.4.6
 
 #Version checks
 Ver55wooper="1.0"
@@ -25,6 +25,8 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
+pogo_package_samsung="com.nianticlabs.pokemongo.ares"
+pogo_package_google="com.nianticlabs.pokemongo"
 
 read_versionfile(){
 if [[ -f $wooper_versions ]] ;then
@@ -54,11 +56,11 @@ fi
   fi
 
   if [ "$apk" = "samsung" ]; then
-      pogo_package="com.nianticlabs.pokemongo.ares"
+      pogo_package=$pogo_package_samsung
   elif [ "$apk" = "google" ]; then
-      pogo_package="com.nianticlabs.pokemongo"
+      pogo_package=$pogo_package_google
   else
-      pogo_package="com.nianticlabs.pokemongo"
+      pogo_package=$pogo_package_google
   fi
 }
 
@@ -243,6 +245,22 @@ update_all(){
     playintegrityfixinstalled=$(cat /data/adb/modules/playintegrityfix/module.prop | /system/bin/grep version | head -n1 | /system/bin/sed 's/ *version=v//')    
 	  playintegrityfixupdate=$(/system/bin/grep 'playintegrityfixupdate' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
 	  playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+
+    if [[ "$apk" = "google" ]] ;then
+      if pm list packages | grep -w "$pogo_package_samsung"; then
+        logger "Configured PoGo APK is $apk, a Samsung version is detected and will be uninstalled."
+      	am force-stop $pogo_package_samsung
+		    sleep 2
+		    pm uninstall $pogo_package_samsung
+    fi
+
+    if [[ "$apk" = "samsung" ]] ;then
+      if pm list packages | grep -w "$pogo_package_google"; then
+        logger "Configured PoGo APK is $apk, a Google version is detected and will be uninstalled."
+      	am force-stop $pogo_package_google
+		    sleep 2
+		    pm uninstall $pogo_package_google
+    fi
 
     if [[ "$pinstalled" != "$pversions" ]] ;then
       logger "New pogo version detected, $pinstalled=>$pversions"
