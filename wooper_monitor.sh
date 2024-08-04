@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.5
+# version 1.1.6
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -16,6 +16,21 @@ fi
 connection_min=1 # Number of upsteam ws connections to require. 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 updatecheck=0
+
+apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+if [[ "$apk" = "samsung" ]]; then
+    :
+else
+    apk="google"
+fi
+
+if [ "$apk" = "samsung" ]; then
+    pogo_package="com.nianticlabs.pokemongo.ares"
+elif [ "$apk" = "google" ]; then
+    pogo_package="com.nianticlabs.pokemongo"
+else
+    pogo_package="com.nianticlabs.pokemongo"
+fi
 
 source /data/local/wooper_versions
 export discord_webhook
@@ -61,7 +76,7 @@ check_for_updates() {
 }
 
 stop_start_exeggcute () {
-	am force-stop com.nianticlabs.pokemongo &  rm -rf /data/data/com.nianticlabs.pokemongo/cache/* & am force-stop com.gocheats.launcher
+	am force-stop $pogo_package &  rm -rf /data/data/$pogo_package/cache/* & am force-stop com.gocheats.launcher
 	sleep 5
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Start exeggcute launcher" >> $logfile
 	/system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
@@ -69,7 +84,7 @@ stop_start_exeggcute () {
 }
 
 stop_pogo () {
-	am force-stop com.nianticlabs.pokemongo & rm -rf /data/data/com.nianticlabs.pokemongo/cache/*
+	am force-stop $pogo_package & rm -rf /data/data/$pogo_package/cache/*
 	sleep 5
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Killing pogo and clearing junk" >> $logfile
 }
@@ -133,7 +148,7 @@ do
     fi
 
 	focusedapp=$(dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d " " -f 7)
-    if [ "$focusedapp" != "com.nianticlabs.pokemongo" ]
+    if [ "$focusedapp" != "$pogo_package" ]
     then
         echo "`date +%Y-%m-%d_%T` [MONITORBOT] Something is not right! PoGo is not in focus. Killing PoGo and clearing junk" >> $logfile
 		[[ $pogo_not_focused == "true" ]] && logger "Something is not right! PoGo is not in focus. Killing PoGo and clearing junk."

@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.4.3
+# version 1.4.4
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.5"
+VerMonitor="1.1.6"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -40,6 +40,11 @@ if [[ -z $branch ]] ;then
   branch=main
 fi
 
+#Overwrite branch with a local config file for testing on a single device
+if [ -e "$branchoverwrite" ]; then
+    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+
   #apk google or samsung
   apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
   if [[ "$apk" = "samsung" ]]; then
@@ -58,10 +63,7 @@ fi
 }
 
 read_versionfile
-#Overwrite branch with a local config file for testing on a single device
-if [ -e "$branchoverwrite" ]; then
-    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
+
 
 # stderr to logfile
 exec 2>> $logfile
