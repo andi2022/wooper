@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.0
+# version 1.4.1
 
 #Version checks
 Ver55wooper="1.0"
@@ -16,6 +16,7 @@ fi
 logfile="/data/local/tmp/wooper.log"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
+branchoverwrite="/data/local/tmp/branch"
 [[ -f /data/local/wooper_download ]] && wooper_download=$(/system/bin/grep url /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_user=$(/system/bin/grep authUser /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_pass=$(/system/bin/grep authPass /data/local/wooper_download | awk -F "=" '{ print $NF }')
@@ -35,6 +36,11 @@ fi
 branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 if [[ -z $branch ]] ;then
   branch=main
+fi
+
+#Overwrite branch with a local config file for testing on a single device
+if [ -e "$branchoverwrite" ]; then
+    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 fi
 
 # stderr to logfile
