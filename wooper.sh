@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.2
+# version 1.4.3
 
 #Version checks
 Ver55wooper="1.0"
@@ -39,6 +39,22 @@ branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's
 if [[ -z $branch ]] ;then
   branch=main
 fi
+
+  #apk google or samsung
+  apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+  if [[ "$apk" = "samsung" ]]; then
+      :
+  else
+      apk="google"
+  fi
+
+  if [ "$apk" = "samsung" ]; then
+      pogo_package="com.nianticlabs.pokemongo.ares"
+  elif [ "$apk" = "google" ]; then
+      pogo_package="com.nianticlabs.pokemongo"
+  else
+      pogo_package="com.nianticlabs.pokemongo"
+  fi
 }
 
 read_versionfile
