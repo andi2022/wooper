@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.6
+# version 1.4.7
 
 #Version checks
 Ver55wooper="1.0"
@@ -252,6 +252,7 @@ update_all(){
       	am force-stop $pogo_package_samsung
 		    sleep 2
 		    pm uninstall $pogo_package_samsung
+      fi
     fi
 
     if [[ "$apk" = "samsung" ]] ;then
@@ -260,6 +261,7 @@ update_all(){
       	am force-stop $pogo_package_google
 		    sleep 2
 		    pm uninstall $pogo_package_google
+      fi
     fi
 
     if [[ "$pinstalled" != "$pversions" ]] ;then
