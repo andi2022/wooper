@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.7
+# version 1.4.8
 
 #Version checks
 Ver55wooper="1.0"
@@ -346,12 +346,16 @@ update_all(){
         /system/bin/rm -f /sdcard/Download/pogo.apk
         /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
-		sleep 45
-		input keyevent 61
-		sleep 2
-		input keyevent 61
-		sleep 2
-		input keyevent 23
+        # restart wooper monitor
+        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f /system/bin/wooper_monitor.sh ] ;then
+          checkMonitor=$(pgrep -f /system/bin/wooper_monitor.sh)
+          if [ ! -z $checkMonitor ] ;then
+            kill -9 $checkMonitor
+            sleep 2
+            /system/bin/wooper_monitor.sh >/dev/null 2>&1 &
+            logger "wooper monitor restarted after PoGo update"
+          fi
+        fi
       fi
 	  if [ "$playintegrityfix_install" = "install" ] ;then
         logger "start updating playintegrityfix"
