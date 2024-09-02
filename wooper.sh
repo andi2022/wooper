@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.18
+# version 1.4.19
 
 #Version checks
 Ver55wooper="1.0"
@@ -251,7 +251,7 @@ update_all(){
 	  playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 
     if [[ "$apk" = "google" ]] ;then
-      if pm list packages | grep -w "$pogo_package_samsung"; then
+      if pm list packages | grep -w "^package:$pogo_package_samsung$"; then
         logger "Configured PoGo APK is $apk, a Samsung version is detected and will be uninstalled."
       	am force-stop $pogo_package_samsung
 		    sleep 2
@@ -260,7 +260,7 @@ update_all(){
     fi
 
     if [[ "$apk" = "samsung" ]] ;then
-      if pm list packages | grep -w "$pogo_package_google"; then
+      if pm list packages | grep -w "^package:$pogo_package_google$"; then
         logger "Configured PoGo APK is $apk, a Google version is detected and will be uninstalled."
       	am force-stop $pogo_package_google
 		    sleep 2
