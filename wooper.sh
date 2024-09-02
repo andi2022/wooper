@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.12
+# version 1.4.13
 
 #Version checks
 Ver55wooper="1.0"
@@ -238,6 +238,7 @@ install_config(){
 }
 
 update_all(){
+    download_versionfile
     pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.gocheats.launcher | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
