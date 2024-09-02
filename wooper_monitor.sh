@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.13
+# version 1.1.14
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -46,9 +46,9 @@ else
     apk="google"
 fi
 
-if [ "$apk" = "samsung" ]; then
+if [ "$apk" == "samsung" ]; then
     pogo_package="com.nianticlabs.pokemongo.ares"
-elif [ "$apk" = "google" ]; then
+elif [ "$apk" == "google" ]; then
     pogo_package="com.nianticlabs.pokemongo"
 else
     pogo_package="com.nianticlabs.pokemongo"
