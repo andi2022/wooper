@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.4.14
+# version 1.4.15
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.9"
+VerMonitor="1.1.10"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -73,15 +73,15 @@ fi
 
   #apk google or samsung
   apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-  if [[ "$apk" = "samsung" ]]; then
+  if [[ "$apk" == "samsung" ]]; then
       :
   else
       apk="google"
   fi
 
-  if [ "$apk" = "samsung" ]; then
+  if [ "$apk" == "samsung" ]; then
       pogo_package=$pogo_package_samsung
-  elif [ "$apk" = "google" ]; then
+  elif [ "$apk" == "google" ]; then
       pogo_package=$pogo_package_google
   else
       pogo_package=$pogo_package_google
