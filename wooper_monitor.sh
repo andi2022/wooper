@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.6
+# version 1.1.7
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -16,6 +16,28 @@ fi
 connection_min=1 # Number of upsteam ws connections to require. 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 updatecheck=0
+
+#Create logfile
+if [ ! -e /data/local/tmp/wooper_monitor.log ] ;then
+	touch /data/local/tmp/wooper_monitor.log
+fi
+
+# stderr to logfile
+exec 2>> $logfile
+
+# logger
+logger() {
+if [[ ! -z $discord_webhook ]] ;then
+  echo "`date +%Y-%m-%d_%T` wooper_monitor.sh: $1" >> $logfile
+  if [[ -z $origin ]] ;then
+    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_monitor.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
+  else
+    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_monitor.sh\", \"content\": \" $origin: $1 \"}"  $discord_webhook &>/dev/null
+  fi
+else
+  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
+fi
+}
 
 apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 if [[ "$apk" = "samsung" ]]; then
@@ -44,30 +66,11 @@ export exeggcute_disconnected
 export pogo_died
 export pogo_not_focused
 
+logger apk=$apk
+logger pogo_package=$pogo_package
+
 
 update_check=$((update_check_interval/monitor_interval))
-
-#Create logfile
-if [ ! -e /data/local/tmp/wooper_monitor.log ] ;then
-	touch /data/local/tmp/wooper_monitor.log
-fi
-
-# stderr to logfile
-exec 2>> $logfile
-
-# logger
-logger() {
-if [[ ! -z $discord_webhook ]] ;then
-  echo "`date +%Y-%m-%d_%T` wooper_monitor.sh: $1" >> $logfile
-  if [[ -z $origin ]] ;then
-    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_monitor.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
-  else
-    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_monitor.sh\", \"content\": \" $origin: $1 \"}"  $discord_webhook &>/dev/null
-  fi
-else
-  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
-fi
-}
 
 check_for_updates() {
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Checking for updates" >> $logfile

@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.4.8
+# version 1.4.9
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.6"
+VerMonitor="1.1.7"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -27,6 +27,30 @@ else
 fi
 pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
+
+# stderr to logfile
+exec 2>> $logfile
+
+# add wooper.sh command to log
+echo "" >> $logfile
+echo "`date +%Y-%m-%d_%T` ## Executing $(basename $0) $@" >> $logfile
+
+
+########## Functions
+
+# logger
+logger() {
+if [[ ! -z $discord_webhook ]] ;then
+  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
+  if [[ -z $origin ]] ;then
+    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
+  else
+    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper.sh\", \"content\": \" $origin: $1 \"}"  $discord_webhook &>/dev/null
+  fi
+else
+  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
+fi
+}
 
 read_versionfile(){
 if [[ -f $wooper_versions ]] ;then
@@ -62,34 +86,13 @@ fi
   else
       pogo_package=$pogo_package_google
   fi
+
+logger apk=$apk
+logger pogoPackage=$pogo_package
 }
 
 read_versionfile
 
-
-# stderr to logfile
-exec 2>> $logfile
-
-# add wooper.sh command to log
-echo "" >> $logfile
-echo "`date +%Y-%m-%d_%T` ## Executing $(basename $0) $@" >> $logfile
-
-
-########## Functions
-
-# logger
-logger() {
-if [[ ! -z $discord_webhook ]] ;then
-  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
-  if [[ -z $origin ]] ;then
-    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
-  else
-    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper.sh\", \"content\": \" $origin: $1 \"}"  $discord_webhook &>/dev/null
-  fi
-else
-  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
-fi
-}
 
 reboot_device(){
     echo "`date +%Y-%m-%d_%T` Reboot device" >> $logfile
