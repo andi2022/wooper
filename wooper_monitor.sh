@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.12
+# version 1.1.13
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -66,8 +66,8 @@ export exeggcute_disconnected
 export pogo_died
 export pogo_not_focused
 
-logger apk=$apk
-logger pogo_package=$pogo_package
+#logger apk=$apk
+#logger pogo_package=$pogo_package
 
 
 update_check=$((update_check_interval/monitor_interval))

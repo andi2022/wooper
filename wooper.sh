@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.4.19
+# version 1.4.20
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.12"
+VerMonitor="1.1.13"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -87,8 +87,8 @@ fi
       pogo_package=$pogo_package_google
   fi
 
-logger apk=$apk
-logger pogoPackage=$pogo_package
+#logger apk=$apk
+#logger pogoPackage=$pogo_package
 }
 
 read_versionfile
