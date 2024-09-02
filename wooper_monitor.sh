@@ -1,8 +1,9 @@
 #!/system/bin/sh
-# version 1.1.7
+# version 1.1.8
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
+versionoverwrite="/data/local/tmp/versions"
 origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
 rotom="$(grep rotom_url $exeggcute | cut -d \" -f 4)"
 rotom_host="$(echo $rotom | cut -d / -f 3 | cut -d : -f 1)"
@@ -16,6 +17,11 @@ fi
 connection_min=1 # Number of upsteam ws connections to require. 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 updatecheck=0
+
+#Overwrite versions with a local config file for testing on a single device
+if [ -e "$versionoverwrite" ]; then
+    wooper_versions=$versionoverwrite
+fi
 
 #Create logfile
 if [ ! -e /data/local/tmp/wooper_monitor.log ] ;then
@@ -54,7 +60,7 @@ else
     pogo_package="com.nianticlabs.pokemongo"
 fi
 
-source /data/local/wooper_versions
+source $wooper_versions
 export discord_webhook
 export useMonitor
 export monitor_interval
