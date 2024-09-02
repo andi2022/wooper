@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.4.8
+# version 1.4.21
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.6"
+VerMonitor="1.1.14"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -27,45 +27,6 @@ else
 fi
 pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
-
-read_versionfile(){
-if [[ -f $wooper_versions ]] ;then
-discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
-if [[ -z $discord_webhook ]] ;then
-  discord_webhook=$(grep discord_webhook /data/local/wooper_download | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
-
-#Scriptbrach
-branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-if [[ -z $branch ]] ;then
-  branch=main
-fi
-
-#Overwrite branch with a local config file for testing on a single device
-if [ -e "$branchoverwrite" ]; then
-    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
-
-  #apk google or samsung
-  apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-  if [[ "$apk" = "samsung" ]]; then
-      :
-  else
-      apk="google"
-  fi
-
-  if [ "$apk" = "samsung" ]; then
-      pogo_package=$pogo_package_samsung
-  elif [ "$apk" = "google" ]; then
-      pogo_package=$pogo_package_google
-  else
-      pogo_package=$pogo_package_google
-  fi
-}
-
-read_versionfile
-
 
 # stderr to logfile
 exec 2>> $logfile
@@ -90,6 +51,48 @@ else
   echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
 fi
 }
+
+read_versionfile(){
+if [[ -f $wooper_versions ]] ;then
+discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+if [[ -z $discord_webhook ]] ;then
+  discord_webhook=$(grep discord_webhook /data/local/wooper_download | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+
+#Scriptbrach
+branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+if [[ -z $branch ]] ;then
+  branch=main
+fi
+
+#Overwrite branch with a local config file for testing on a single device
+if [ -e "$branchoverwrite" ]; then
+    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+
+  #apk google or samsung
+  apk=$(grep '^apk=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+  if [[ "$apk" == "samsung" ]]; then
+      :
+  else
+      apk="google"
+  fi
+
+  if [ "$apk" == "samsung" ]; then
+      pogo_package=$pogo_package_samsung
+  elif [ "$apk" == "google" ]; then
+      pogo_package=$pogo_package_google
+  else
+      pogo_package=$pogo_package_google
+  fi
+
+#logger apk=$apk
+#logger pogoPackage=$pogo_package
+}
+
+read_versionfile
+
 
 reboot_device(){
     echo "`date +%Y-%m-%d_%T` Reboot device" >> $logfile
@@ -235,6 +238,7 @@ install_config(){
 }
 
 update_all(){
+    download_versionfile
     pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.gocheats.launcher | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
@@ -247,7 +251,7 @@ update_all(){
 	  playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 
     if [[ "$apk" = "google" ]] ;then
-      if pm list packages | grep -w "$pogo_package_samsung"; then
+      if pm list packages | grep -w "^package:$pogo_package_samsung$"; then
         logger "Configured PoGo APK is $apk, a Samsung version is detected and will be uninstalled."
       	am force-stop $pogo_package_samsung
 		    sleep 2
@@ -256,7 +260,7 @@ update_all(){
     fi
 
     if [[ "$apk" = "samsung" ]] ;then
-      if pm list packages | grep -w "$pogo_package_google"; then
+      if pm list packages | grep -w "^package:$pogo_package_google$"; then
         logger "Configured PoGo APK is $apk, a Google version is detected and will be uninstalled."
       	am force-stop $pogo_package_google
 		    sleep 2

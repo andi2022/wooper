@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.6
+# version 1.1.14
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -16,36 +16,6 @@ fi
 connection_min=1 # Number of upsteam ws connections to require. 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 updatecheck=0
-
-apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-if [[ "$apk" = "samsung" ]]; then
-    :
-else
-    apk="google"
-fi
-
-if [ "$apk" = "samsung" ]; then
-    pogo_package="com.nianticlabs.pokemongo.ares"
-elif [ "$apk" = "google" ]; then
-    pogo_package="com.nianticlabs.pokemongo"
-else
-    pogo_package="com.nianticlabs.pokemongo"
-fi
-
-source /data/local/wooper_versions
-export discord_webhook
-export useMonitor
-export monitor_interval
-export update_check_interval
-export debug
-export recreate_exeggcute_config
-export exeggcute_died
-export exeggcute_disconnected
-export pogo_died
-export pogo_not_focused
-
-
-update_check=$((update_check_interval/monitor_interval))
 
 #Create logfile
 if [ ! -e /data/local/tmp/wooper_monitor.log ] ;then
@@ -68,6 +38,39 @@ else
   echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
 fi
 }
+
+apk=$(grep '^apk=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+if [[ "$apk" == "samsung" ]]; then
+    :
+else
+    apk="google"
+fi
+
+if [ "$apk" == "samsung" ]; then
+    pogo_package="com.nianticlabs.pokemongo.ares"
+elif [ "$apk" == "google" ]; then
+    pogo_package="com.nianticlabs.pokemongo"
+else
+    pogo_package="com.nianticlabs.pokemongo"
+fi
+
+source /data/local/wooper_versions
+export discord_webhook
+export useMonitor
+export monitor_interval
+export update_check_interval
+export debug
+export recreate_exeggcute_config
+export exeggcute_died
+export exeggcute_disconnected
+export pogo_died
+export pogo_not_focused
+
+#logger apk=$apk
+#logger pogo_package=$pogo_package
+
+
+update_check=$((update_check_interval/monitor_interval))
 
 check_for_updates() {
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Checking for updates" >> $logfile
