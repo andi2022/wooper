@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.15
+# version 1.4.16
 
 #Version checks
 Ver55wooper="1.0"
@@ -72,7 +72,7 @@ if [ -e "$branchoverwrite" ]; then
 fi
 
   #apk google or samsung
-  apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+  apk=$(grep '^apk=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
   if [[ "$apk" == "samsung" ]]; then
       :
   else
