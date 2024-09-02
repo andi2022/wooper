@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.4.11
+# version 1.4.12
 
 #Version checks
 Ver55wooper="1.0"
@@ -17,7 +17,6 @@ logfile="/data/local/tmp/wooper.log"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
 branchoverwrite="/data/local/tmp/branch"
-versionoverwrite="/data/local/tmp/versions"
 [[ -f /data/local/wooper_download ]] && wooper_download=$(/system/bin/grep url /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_user=$(/system/bin/grep authUser /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_pass=$(/system/bin/grep authPass /data/local/wooper_download | awk -F "=" '{ print $NF }')
@@ -70,11 +69,6 @@ fi
 #Overwrite branch with a local config file for testing on a single device
 if [ -e "$branchoverwrite" ]; then
     branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
-
-#Overwrite versions with a local config file for testing on a single device
-if [ -e "$versionoverwrite" ]; then
-    wooper_versions=$versionoverwrite
 fi
 
   #apk google or samsung
