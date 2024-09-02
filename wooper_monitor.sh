@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.11
+# version 1.1.12
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -54,7 +54,7 @@ else
     pogo_package="com.nianticlabs.pokemongo"
 fi
 
-source $wooper_versions
+source /data/local/wooper_versions
 export discord_webhook
 export useMonitor
 export monitor_interval
