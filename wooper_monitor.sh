@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.10
+# version 1.1.11
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -39,7 +39,7 @@ else
 fi
 }
 
-apk=$(grep 'apk' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+apk=$(grep '^apk=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 if [[ "$apk" == "samsung" ]]; then
     :
 else
