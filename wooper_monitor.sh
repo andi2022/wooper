@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.16
+# version 1.1.17
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -16,6 +16,8 @@ fi
 connection_min=1 # Number of upsteam ws connections to require. 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 updatecheck=0
+pogo_package_samsung="com.nianticlabs.pokemongo.ares"
+pogo_package_google="com.nianticlabs.pokemongo"
 
 #Create logfile
 if [ ! -e /data/local/tmp/wooper_monitor.log ] ;then
@@ -39,19 +41,20 @@ else
 fi
 }
 
+#apk google or samsung
 apk=$(grep '^apk=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 if [[ "$apk" == "samsung" ]]; then
-    :
+	:
 else
-    apk="google"
+	apk="google"
 fi
 
 if [ "$apk" == "samsung" ]; then
-    pogo_package="com.nianticlabs.pokemongo.ares"
+	pogo_package=$pogo_package_samsung
 elif [ "$apk" == "google" ]; then
-    pogo_package="com.nianticlabs.pokemongo"
+	pogo_package=$pogo_package_google
 else
-    pogo_package="com.nianticlabs.pokemongo"
+	pogo_package=$pogo_package_google
 fi
 
 source /data/local/wooper_versions
