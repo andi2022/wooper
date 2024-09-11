@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.1.15
+# version 1.1.16
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
@@ -152,7 +152,7 @@ do
 
 	focusedapp=$(dumpsys window windows | grep -E 'mFocusedApp'| cut -d / -f 1 | cut -d " " -f 7)
 	logger "debug focusedapp $focusedapp"
-	logger "debug pogo_package $pogo_package
+	logger "debug pogo_package $pogo_package"
     if [ "$focusedapp" != "$pogo_package" ]
     then
         echo "`date +%Y-%m-%d_%T` [MONITORBOT] Something is not right! PoGo is not in focus. Killing PoGo and clearing junk" >> $logfile
