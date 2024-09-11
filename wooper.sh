@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.4.2
+# version 1.4.26
 
 #Version checks
 Ver55wooper="1.0"
 Ver55cron="1.0"
-VerMonitor="1.1.5"
+VerMonitor="1.1.19"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -25,27 +25,8 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
-
-read_versionfile(){
-if [[ -f $wooper_versions ]] ;then
-discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
-if [[ -z $discord_webhook ]] ;then
-  discord_webhook=$(grep discord_webhook /data/local/wooper_download | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
-
-#Scriptbrach
-branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-if [[ -z $branch ]] ;then
-  branch=main
-fi
-}
-
-read_versionfile
-#Overwrite branch with a local config file for testing on a single device
-if [ -e "$branchoverwrite" ]; then
-    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
-fi
+pogo_package_samsung="com.nianticlabs.pokemongo.ares"
+pogo_package_google="com.nianticlabs.pokemongo"
 
 # stderr to logfile
 exec 2>> $logfile
@@ -70,6 +51,48 @@ else
   echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
 fi
 }
+
+read_versionfile(){
+if [[ -f $wooper_versions ]] ;then
+discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+if [[ -z $discord_webhook ]] ;then
+  discord_webhook=$(grep discord_webhook /data/local/wooper_download | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+
+#Scriptbrach
+branch=$(grep 'branch' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+if [[ -z $branch ]] ;then
+  branch=main
+fi
+
+#Overwrite branch with a local config file for testing on a single device
+if [ -e "$branchoverwrite" ]; then
+    branch=$(grep 'branch' $branchoverwrite | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+fi
+
+  #apk google or samsung
+  apk=$(grep '^apk=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+  if [[ "$apk" == "samsung" ]]; then
+      :
+  else
+      apk="google"
+  fi
+
+  if [ "$apk" == "samsung" ]; then
+      pogo_package=$pogo_package_samsung
+  elif [ "$apk" == "google" ]; then
+      pogo_package=$pogo_package_google
+  else
+      pogo_package=$pogo_package_google
+  fi
+
+#logger apk=$apk
+#logger pogoPackage=$pogo_package
+}
+
+read_versionfile
+
 
 reboot_device(){
     echo "`date +%Y-%m-%d_%T` Reboot device" >> $logfile
@@ -177,8 +200,8 @@ fi
     done
 
     # let us kill pogo as well and clear data
-    /system/bin/am force-stop com.nianticlabs.pokemongo > /dev/null 2>&1
-    /system/bin/pm clear com.nianticlabs.pokemongo > /dev/null 2>&1
+    /system/bin/am force-stop $pogo_package > /dev/null 2>&1
+    /system/bin/pm clear $pogo_package > /dev/null 2>&1
 
     # Install exeggcute
     /system/bin/pm install -r /sdcard/Download/exeggcute.apk > /dev/null 2>&1
@@ -215,7 +238,8 @@ install_config(){
 }
 
 update_all(){
-    pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
+    download_versionfile
+    pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     exeggcuteinstalled=$(dumpsys package com.gocheats.launcher | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     exeggcuteversions=$(/system/bin/grep 'exeggcute' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
@@ -225,6 +249,24 @@ update_all(){
     playintegrityfixinstalled=$(cat /data/adb/modules/playintegrityfix/module.prop | /system/bin/grep version | head -n1 | /system/bin/sed 's/ *version=v//')    
 	  playintegrityfixupdate=$(/system/bin/grep 'playintegrityfixupdate' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
 	  playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
+
+    if [[ "$apk" = "google" ]] ;then
+      if pm list packages | grep -w "^package:$pogo_package_samsung$"; then
+        logger "Configured PoGo APK is $apk, a Samsung version is detected and will be uninstalled."
+      	am force-stop $pogo_package_samsung
+		    sleep 2
+		    pm uninstall $pogo_package_samsung
+      fi
+    fi
+
+    if [[ "$apk" = "samsung" ]] ;then
+      if pm list packages | grep -w "^package:$pogo_package_google$"; then
+        logger "Configured PoGo APK is $apk, a Google version is detected and will be uninstalled."
+      	am force-stop $pogo_package_google
+		    sleep 2
+		    pm uninstall $pogo_package_google
+      fi
+    fi
 
     if [[ "$pinstalled" != "$pversions" ]] ;then
       logger "New pogo version detected, $pinstalled=>$pversions"
@@ -300,20 +342,24 @@ update_all(){
         logger "Start updating pogo"
         # install pogo
         am force-stop com.gocheats.launcher
-		am force-stop com.nianticlabs.pokemongo
+		am force-stop $pogo_package
 		sleep 2
-		pm uninstall com.nianticlabs.pokemongo
+		pm uninstall $pogo_package
 		sleep 2
         /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
         /system/bin/rm -f /sdcard/Download/pogo.apk
         /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
-		sleep 45
-		input keyevent 61
-		sleep 2
-		input keyevent 61
-		sleep 2
-		input keyevent 23
+        # restart wooper monitor
+        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f /system/bin/wooper_monitor.sh ] ;then
+          checkMonitor=$(pgrep -f /system/bin/wooper_monitor.sh)
+          if [ ! -z $checkMonitor ] ;then
+            kill -9 $checkMonitor
+            sleep 2
+            /system/bin/wooper_monitor.sh >/dev/null 2>&1 &
+            logger "wooper monitor restarted after PoGo update"
+          fi
+        fi
       fi
 	  if [ "$playintegrityfix_install" = "install" ] ;then
         logger "start updating playintegrityfix"
@@ -329,13 +375,13 @@ update_all(){
 }
 
 downgrade_pogo(){
-    pinstalled=$(dumpsys package com.nianticlabs.pokemongo | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
+    pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
     pversions=$(/system/bin/grep 'pogo' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
     if [[ "$pinstalled" != "$pversions" ]] ;then
       until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
       done
-      /system/bin/pm uninstall com.nianticlabs.pokemongo > /dev/null 2>&1
+      /system/bin/pm uninstall $pogo_package > /dev/null 2>&1
       /system/bin/pm install -r /sdcard/Download/pogo.apk
       /system/bin/rm -f /sdcard/Download/pogo.apk
       logger "PoGo installed, now $pversions"
