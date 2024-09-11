@@ -18,6 +18,8 @@ The disconnected check function in the wooper_monitor script is from [jinntar](h
 # Changelog
 **wooper script**
 ```
+1.5.0
+added support for samsung apk
 1.4.0
 increase version for publishing to main branch. Support for changing branches.
 1.3.12
@@ -60,6 +62,8 @@ Internal release, reworking gcconf to wooper with support for Exeggcute
 
 **wooper monitor script**
 ```
+1.2.0
+added support for samsung apk
 1.1.5
 clear logcat after issue found to prevent false positive after script rerun
 1.1.4
@@ -110,10 +114,10 @@ The directory should contain the following files :
 Hers is a typical example of directory content :
 
 ```
-com.exeggcute.launcher_v3.0.111.apk
-pokemongo_arm64-v8a_0.291.2.apk
-pokemongo_armeabi-v7a_0.291.2.apk
-PlayIntegrityFix_v14.5.zip
+com.exeggcute.launcher_v3.0.213.apk
+pokemongo_arm64-v8a_0.327.0.apk
+pokemongo_armeabi-v7a_0.327.0.apk
+PlayIntegrityFix_v17.3.zip
 config.json
 versions
 ```
@@ -134,17 +138,18 @@ Please note that `"device_name":"dummy"` should not be changed. The script will 
 
 Here is the content of the `versions` file:
 ```
-pogo=0.291.2
-exeggcute=3.0.111
+pogo=0.327.0
+exeggcute=3.0.213
+apk=samsung
 playintegrityfixupdate=true
-playintegrityfixversion=14.5
+playintegrityfixversion=17.3
 discord_webhook="Your_webhock_url"
 
 # Settings for worker count
 globalworkers=true
 workerscount=6
 
-# Settings for Wooper monitor script
+# Settings for wooper monitor script
 useMonitor=true
 monitor_interval=300
 update_check_interval=3600
@@ -156,8 +161,9 @@ exeggcute_died=true
 exeggcute_disconnected=true
 pogo_died=true
 pogo_not_focused=true
-
 ```
+New exeggcute releases use the samsung PoGO apk, the apk value can be samsung or google.
+
 The script will automatically check those versions. If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
 # Tested ATV Devices/ROM's
 - X96 Mini (S905w) / a95xf1 (S905w) PoGoRom 1.5
