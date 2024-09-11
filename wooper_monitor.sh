@@ -1,8 +1,9 @@
 #!/system/bin/sh
-# version 1.1.17
+# version 1.1.18
 
 logfile="/data/local/tmp/wooper_monitor.log"
 exeggcute="/data/local/tmp/config.json"
+wooper_versions="/data/local/wooper_versions"
 origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
 rotom="$(grep rotom_url $exeggcute | cut -d \" -f 4)"
 rotom_host="$(echo $rotom | cut -d / -f 3 | cut -d : -f 1)"
