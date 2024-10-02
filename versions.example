@@ -1,8 +1,9 @@
-pogo=0.327.0
-exeggcute=3.0.213
-apk=samsung
+pogo=0.333.0
+exeggcute=3.0.217
+apk=google
+apkm=true
 playintegrityfixupdate=true
-playintegrityfixversion=17.3
+playintegrityfixversion=17.6
 discord_webhook="Your_webhock_url"
 
 # Settings for worker count
