@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.0
+# version 1.5.1
 
 #Version checks
 Ver55wooper="1.0"
@@ -25,6 +25,7 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
+apkm=$(/system/bin/grep 'apkm' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
 pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
 
@@ -270,10 +271,22 @@ update_all(){
 
     if [[ "$pinstalled" != "$pversions" ]] ;then
       logger "New pogo version detected, $pinstalled=>$pversions"
-      /system/bin/rm -f /sdcard/Download/pogo.apk
-      until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
-        sleep 2
-      done
+        if [[ "$apkm" = "true" ]] ;then
+          /system/bin/rm -f /sdcard/Download/pogo.apkm
+          /system/bin/rm -f -r /sdcard/Download/pogoapkm
+          until $download /sdcard/Download/pogo.apkm $wooper_download/com.nianticlabs.pokemongo_$arch_$pversions.apkm || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apkm $wooper_download/com.nianticlabs.pokemongo_$arch_$pversions.apkm" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
+            sleep 2
+          done
+          mkdir /sdcard/Download/pogoapkm
+          logger "Extract pogo.apkm $versions"
+          unzip /sdcard/Download/pogo.apkm -d pogoapkm
+          /system/bin/rm -f /sdcard/Download/pogo.apkm
+        else
+          /system/bin/rm -f /sdcard/Download/pogo.apk
+          until $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apk $wooper_download/pokemongo_$arch\_$pversions.apk" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
+            sleep 2
+          done
+        fi
       # set pogo to be installed
       pogo_install="install"
     else
@@ -324,30 +337,34 @@ update_all(){
         logger "Start updating exeggcute"
         # install gocheats
         am force-stop com.gocheats.launcher
-		sleep 2
-		pm uninstall com.gocheats.launcher
-		sleep 2
+        sleep 2
+        pm uninstall com.gocheats.launcher
+        sleep 2
         /system/bin/pm install -r /sdcard/Download/exeggcute.apk || { echo "`date +%Y-%m-%d_%T` Install gocheats failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
         /system/bin/rm -f /sdcard/Download/exeggcute.apk
 
-		# Grant su access + settings after reinstall
-		euid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
-		magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
+        # Grant su access + settings after reinstall
+        euid="$(dumpsys package com.gocheats.launcher | /system/bin/grep userId | awk -F'=' '{print $2}')"
+        magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
         /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
         /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
-		/system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+		    /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "exeggcute updated, launcher started"
       fi
       if [ "$pogo_install" = "install" ] ;then
         logger "Start updating pogo"
         # install pogo
-        am force-stop com.gocheats.launcher
-		am force-stop $pogo_package
-		sleep 2
-		pm uninstall $pogo_package
-		sleep 2
-        /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
-        /system/bin/rm -f /sdcard/Download/pogo.apk
+          am force-stop com.gocheats.launcher
+          am force-stop $pogo_package
+          sleep 2
+          pm uninstall $pogo_package
+          sleep 2
+          if [ "$apkm" = "true" ] ;then
+            /system/bin/pm install -r /sdcard/Download/apkm/pbase.apk && /system/bin/pm install -p com.nianticlabs.pokemongo -r /sdcard/Download/split_config.$arch.apk || { logger "install pogo failed, downgrade perhaps? Exit script" ; exit 1; }
+          else
+            /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
+            /system/bin/rm -f /sdcard/Download/pogo.apk
+          fi
         /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
         # restart wooper monitor
@@ -386,12 +403,6 @@ downgrade_pogo(){
       /system/bin/rm -f /sdcard/Download/pogo.apk
       logger "PoGo installed, now $pversions"
       /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
-	  sleep 45
-	  input keyevent 61
-	  sleep 2
-	  input keyevent 61
-	  sleep 2
-	  input keyevent 23
     else
       echo "`date +%Y-%m-%d_%T` pogo version correct, proceed" >> $logfile
     fi
