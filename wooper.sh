@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.6.0
+# version 1.6.1
 
 #Version checks
 Ver55wooper="1.0"
@@ -16,6 +16,8 @@ fi
 logfile="/data/local/tmp/wooper.log"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
+wooper_adb_keys="data/local/wooper_adb_keys"
+adb_keys="/data/misc/adb/adb_keys"
 branchoverwrite="/data/local/tmp/branch"
 [[ -f /data/local/wooper_download ]] && wooper_download=$(/system/bin/grep url /data/local/wooper_download | awk -F "=" '{ print $NF }')
 [[ -f /data/local/wooper_download ]] && wooper_user=$(/system/bin/grep authUser /data/local/wooper_download | awk -F "=" '{ print $NF }')
@@ -90,6 +92,9 @@ fi
 # apkbundle enabled or disabled
 apkm=$(grep '^apkm=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 
+# adbfingerprint anabled or disabled
+adbfingerprint=$(grep '^adbfingerprint=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
+
 #logger apk=$apk
 #logger pogoPackage=$pogo_package
 }
@@ -147,6 +152,30 @@ done
 dos2unix $wooper_versions
 echo "`date +%Y-%m-%d_%T` Downloaded latest versions file"  >> $logfile
 read_versionfile
+}
+
+download_adb_keys() {
+  until $download $wooper_adb_keys $wooper_download/adb_keys || { echo "`date +%Y-%m-%d_%T` $download $wooper_adb_keys $wooper_download/adb_keys" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download adb_keys file failed, exit script" >> $logfile ; exit 1; } ;do
+      sleep 2
+  done
+  dos2unix $wooper_adb_keys
+  echo "`date +%Y-%m-%d_%T` Downloaded latest adb_keys file"  >> $logfile
+}
+
+copy_adb_keys_if_newer() {
+  # Check if the destination file exists
+  if [ ! -f "$adb_keys" ]; then
+    log "Install adb_keys"
+    cp -f "$wooper_adb_keys" "$adb_keys"
+  else
+    # Compare the modification times of the files
+    if [ "$wooper_adb_keys" -nt "$adb_keys" ]; then
+      log "Newer adb_keys found, copy updated version"
+      cp -f "$wooper_adb_keys" "$adb_keys"
+    else
+      echo "`date +%Y-%m-%d_%T` latest adb_keys file allready installed"  >> $logfile
+    fi
+  fi
 }
 
 install_wooper(){
@@ -604,6 +633,12 @@ fi
 
 # check apk install settings
 check_apkinstall_settings
+
+# install or update adb_keys if config is enabled
+  if [ "$adbfingerprint" = "true" ] ;then
+  download_adb_keys
+  copy_adb_keys_if_newer
+  fi
 
 for i in "$@" ;do
     case "$i" in
