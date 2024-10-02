@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.11
+# version 1.5.12
 
 #Version checks
 Ver55wooper="1.0"
@@ -25,7 +25,6 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
-apkm=$(grep '^apkm=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
 
@@ -87,6 +86,9 @@ fi
   else
       pogo_package=$pogo_package_google
   fi
+
+# apkbundle enabled or disabled
+apkm=$(grep '^apkm=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 
 #logger apk=$apk
 #logger pogoPackage=$pogo_package
