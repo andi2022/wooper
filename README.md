@@ -124,7 +124,7 @@ config.json
 versions
 ```
 Please note the naming convention for the different files, this is important and shouldn't be changed.
-**New naming sheme for PoGo apkm, only for apkm, old apk's uses the old naming sheme.**
+**New naming scheme for PoGo apkm, only for apkm, old apk's uses the old naming scheme.**
 ```
 pokemongo_arm64-v8a_0.327.0.apk
 pokemongo_armeabi-v7a_0.327.0.apk
@@ -171,7 +171,7 @@ pogo_died=true
 pogo_not_focused=true
 ```
 ~~New exeggcute releases use the samsung PoGO apk, the apk value can be samsung or google.~~
-Exeggcute is back to Google apk, support for apkbundle is now added, new config options and naming sheme for PoGo apkm files.
+Exeggcute is back to Google apk, support for apkbundle is now added, new config options and naming scheme for PoGo apkm files.
 
 The script will automatically check those versions. If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
 # Tested ATV Devices/ROM's
