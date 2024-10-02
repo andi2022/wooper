@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.8
+# version 1.5.9
 
 #Version checks
 Ver55wooper="1.0"
@@ -388,7 +388,7 @@ update_all(){
           pm uninstall $pogo_package
           sleep 2
           if [ "$apkm" = "true" ] ;then
-            /system/bin/pm install -r /sdcard/Download/pogoapkm/base.apk && /system/bin/pm install -p com.nianticlabs.pokemongo -r /sdcard/Download/pogoapkm/split_config.$arch.apk || { logger "install pogo failed, downgrade perhaps? Exit script" ; exit 1; }
+            /system/bin/pm install -r "/sdcard/Download/pogoapkm/base.apk" && /system/bin/pm install -p "com.nianticlabs.pokemongo" -r "/sdcard/Download/pogoapkm/split_config.*.apk" || { logger "install pogo failed, downgrade perhaps? Exit script" ; exit 1; }
             /system/bin/rm -f -r /sdcard/Download/pogoapkm
           else
             /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
