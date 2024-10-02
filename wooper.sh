@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.1
+# version 1.5.2
 
 #Version checks
 Ver55wooper="1.0"
@@ -274,7 +274,7 @@ update_all(){
         if [[ "$apkm" = "true" ]] ;then
           /system/bin/rm -f /sdcard/Download/pogo.apkm
           /system/bin/rm -f -r /sdcard/Download/pogoapkm
-          until $download /sdcard/Download/pogo.apkm $wooper_download/com.nianticlabs.pokemongo_$arch_$pversions.apkm || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apkm $wooper_download/com.nianticlabs.pokemongo_$arch_$pversions.apkm" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
+          until $download /sdcard/Download/pogo.apkm $wooper_download/com.nianticlabs.pokemongo_$arch\_$pversions.apkm || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/pogo.apkm $wooper_download/com.nianticlabs.pokemongo_$arch_$pversions.apkm" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download pogo failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
           done
           mkdir /sdcard/Download/pogoapkm
