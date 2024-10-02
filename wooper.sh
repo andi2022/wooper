@@ -1,5 +1,5 @@
 logfil#!/system/bin/sh
-# version 1.6.2
+# version 1.6.3
 
 #Version checks
 Ver55wooper="1.0"
@@ -169,13 +169,13 @@ copy_adb_keys_if_newer() {
     cp -f "$wooper_adb_keys" "$adb_keys"
     chmod 644 $adb_keys
   else
-    # Compare the modification times of the files
-    if [ "$wooper_adb_keys" -nt "$adb_keys" ]; then
+    # Compare file contents
+    if ! diff "$wooper_adb_keys" "$adb_keys" >/dev/null; then
       logger "Newer adb_keys found, copy updated version"
       cp -f "$wooper_adb_keys" "$adb_keys"
-      chmod 644 $adb_keys
+      chmod 644 "$adb_keys"
     else
-      echo "`date +%Y-%m-%d_%T` latest adb_keys file allready installed"  >> $logfile
+      echo "$(date +%Y-%m-%d_%T) latest adb_keys file already installed"  >> "$logfile"
     fi
   fi
 }
