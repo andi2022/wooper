@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.2
+# version 1.5.3
 
 #Version checks
 Ver55wooper="1.0"
@@ -25,7 +25,7 @@ if [[ -f /data/local/tmp/config.json ]] ;then
 else
     origin=$(/system/bin/cat /data/local/initDName)
 fi
-apkm=$(/system/bin/grep 'apkm' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
+apkm=$(grep '^apkm=' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
 pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
 
