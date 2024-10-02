@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.7
+# version 1.5.8
 
 #Version checks
 Ver55wooper="1.0"
@@ -236,6 +236,34 @@ install_config(){
     done
     /system/bin/sed -i 's,dummy,'$origin',g' $exeggcute
     logger "exeggcute config installed"
+}
+
+check_apkinstall_settings(){
+  # Desired settings
+  desired_package_verifier_enable=0
+  desired_verifier_verify_adb_installs=0
+  desired_package_verifier_user_consent=-1
+
+  # Get current settings
+  current_package_verifier_enable=$(settings get global package_verifier_enable)
+  current_verifier_verify_adb_installs=$(settings get global verifier_verify_adb_installs)
+  current_package_verifier_user_consent=$(settings get global package_verifier_user_consent)
+
+  # Check and set settings if necessary
+  if [ "$current_package_verifier_enable" != "$desired_package_verifier_enable" ]; then
+      settings put global package_verifier_enable $desired_package_verifier_enable
+      log "disable package verifier"
+  fi
+
+  if [ "$current_verifier_verify_adb_installs" != "$desired_verifier_verify_adb_installs" ]; then
+      settings put global verifier_verify_adb_installs $desired_verifier_verify_adb_installs
+      log "disable adb package verifier"
+  fi
+
+  if [ "$current_package_verifier_user_consent" != "$desired_package_verifier_user_consent" ]; then
+      settings put global package_verifier_user_consent $desired_package_verifier_user_consent
+      log "disable package verifier user consent"
+  fi
 }
 
 update_all(){
@@ -548,6 +576,9 @@ if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }' | awk '{ g
     echo "`date +%Y-%m-%d_%T` wooper.sh: wooper monitor enabled" >> $logfile
   fi
 fi
+
+# check apk install settings
+check_apkinstall_settings
 
 for i in "$@" ;do
     case "$i" in
