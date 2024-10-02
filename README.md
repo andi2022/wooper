@@ -18,6 +18,8 @@ The disconnected check function in the wooper_monitor script is from [jinntar](h
 # Changelog
 **wooper script**
 ```
+1.6.0
+added support for apkm (google)
 1.5.0
 added support for samsung apk
 1.4.0
@@ -114,14 +116,19 @@ The directory should contain the following files :
 Hers is a typical example of directory content :
 
 ```
-com.exeggcute.launcher_v3.0.213.apk
-pokemongo_arm64-v8a_0.327.0.apk
-pokemongo_armeabi-v7a_0.327.0.apk
-PlayIntegrityFix_v17.3.zip
+com.exeggcute.launcher_v3.0.217.apk
+com.nianticlabs.pokemongo_arm64-v8a_0.333.0.apkm
+com.nianticlabs.pokemongo_armeabi-v7a_0.333.0.apkm
+PlayIntegrityFix_v17.6.zip
 config.json
 versions
 ```
 Please note the naming convention for the different files, this is important and shouldn't be changed.
+**New naming sheme for PoGo apkm, only for apkm, old apk's uses the old naming sheme.**
+```
+pokemongo_arm64-v8a_0.327.0.apk
+pokemongo_armeabi-v7a_0.327.0.apk
+```
 
 Here is the content of the `config.json` file :
 
@@ -138,11 +145,12 @@ Please note that `"device_name":"dummy"` should not be changed. The script will 
 
 Here is the content of the `versions` file:
 ```
-pogo=0.327.0
-exeggcute=3.0.213
-apk=samsung
+pogo=0.333.0
+exeggcute=3.0.217
+apk=google
+apkm=true
 playintegrityfixupdate=true
-playintegrityfixversion=17.3
+playintegrityfixversion=17.8
 discord_webhook="Your_webhock_url"
 
 # Settings for worker count
@@ -162,7 +170,8 @@ exeggcute_disconnected=true
 pogo_died=true
 pogo_not_focused=true
 ```
-New exeggcute releases use the samsung PoGO apk, the apk value can be samsung or google.
+~~New exeggcute releases use the samsung PoGO apk, the apk value can be samsung or google.~~
+Exeggcute is back to Google apk, support for apkbundle is now added, new config options and naming sheme for PoGo apkm files.
 
 The script will automatically check those versions. If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
 # Tested ATV Devices/ROM's
