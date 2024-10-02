@@ -1,5 +1,5 @@
 logfil#!/system/bin/sh
-# version 1.6.3
+# version 1.7.0
 
 #Version checks
 Ver55wooper="1.0"
