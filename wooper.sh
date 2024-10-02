@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.5.5
+# version 1.5.6
 
 #Version checks
 Ver55wooper="1.0"
@@ -279,7 +279,7 @@ update_all(){
           done
           mkdir /sdcard/Download/pogoapkm
           logger "Extract pogo.apkm $versions"
-          unzip /sdcard/Download/pogo.apkm -d pogoapkm
+          unzip /sdcard/Download/pogo.apkm -d /sdcard/Download/pogoapkm
           /system/bin/rm -f /sdcard/Download/pogo.apkm
         else
           /system/bin/rm -f /sdcard/Download/pogo.apk
