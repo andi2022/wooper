@@ -1,5 +1,5 @@
-#!/system/bin/sh
-# version 1.6.1
+logfil#!/system/bin/sh
+# version 1.6.2
 
 #Version checks
 Ver55wooper="1.0"
@@ -165,13 +165,13 @@ download_adb_keys() {
 copy_adb_keys_if_newer() {
   # Check if the destination file exists
   if [ ! -f "$adb_keys" ]; then
-    log "Install adb_keys"
+    logger "Install adb_keys"
     cp -f "$wooper_adb_keys" "$adb_keys"
     chmod 644 $adb_keys
   else
     # Compare the modification times of the files
     if [ "$wooper_adb_keys" -nt "$adb_keys" ]; then
-      log "Newer adb_keys found, copy updated version"
+      logger "Newer adb_keys found, copy updated version"
       cp -f "$wooper_adb_keys" "$adb_keys"
       chmod 644 $adb_keys
     else
@@ -285,17 +285,17 @@ check_apkinstall_settings(){
   # Check and set settings if necessary
   if [ "$current_package_verifier_enable" != "$desired_package_verifier_enable" ]; then
       settings put global package_verifier_enable $desired_package_verifier_enable
-      log "disable package verifier"
+      logger "disable package verifier"
   fi
 
   if [ "$current_verifier_verify_adb_installs" != "$desired_verifier_verify_adb_installs" ]; then
       settings put global verifier_verify_adb_installs $desired_verifier_verify_adb_installs
-      log "disable adb package verifier"
+      logger "disable adb package verifier"
   fi
 
   if [ "$current_package_verifier_user_consent" != "$desired_package_verifier_user_consent" ]; then
       settings put global package_verifier_user_consent $desired_package_verifier_user_consent
-      log "disable package verifier user consent"
+      logger "disable package verifier user consent"
   fi
 }
 
