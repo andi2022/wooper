@@ -167,11 +167,13 @@ copy_adb_keys_if_newer() {
   if [ ! -f "$adb_keys" ]; then
     log "Install adb_keys"
     cp -f "$wooper_adb_keys" "$adb_keys"
+    chmod 644 $adb_keys
   else
     # Compare the modification times of the files
     if [ "$wooper_adb_keys" -nt "$adb_keys" ]; then
       log "Newer adb_keys found, copy updated version"
       cp -f "$wooper_adb_keys" "$adb_keys"
+      chmod 644 $adb_keys
     else
       echo "`date +%Y-%m-%d_%T` latest adb_keys file allready installed"  >> $logfile
     fi
