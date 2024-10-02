@@ -18,6 +18,8 @@ The disconnected check function in the wooper_monitor script is from [jinntar](h
 # Changelog
 **wooper script**
 ```
+1.7.0
+added support to copy adb_keys
 1.6.0
 added support for apkm (google)
 1.5.0
@@ -116,6 +118,7 @@ The directory should contain the following files :
 Hers is a typical example of directory content :
 
 ```
+adb_keys
 com.exeggcute.launcher_v3.0.217.apk
 com.nianticlabs.pokemongo_arm64-v8a_0.333.0.apkm
 com.nianticlabs.pokemongo_armeabi-v7a_0.333.0.apkm
@@ -149,6 +152,7 @@ pogo=0.333.0
 exeggcute=3.0.217
 apk=google
 apkm=true
+adb_keys=false
 playintegrityfixupdate=true
 playintegrityfixversion=17.8
 discord_webhook="Your_webhock_url"
@@ -174,6 +178,14 @@ pogo_not_focused=true
 Exeggcute is back to Google apk, support for apkbundle is now added, new config options and naming scheme for PoGo apkm files.
 
 The script will automatically check those versions. If the versions have changed, it will download the corresponding APKs from your above specified folder and will install them automatically.
+
+With a resent PIF module update, adb needs to verify the fingerprint.
+Now we can copy one or multiple public keys for adb to your device.
+Feature is disabled per default. Set`adbfingerprint=true` in your versions file and add a file `adb_keys` to your web server. 1 public key per line.
+On Windows you find your adb public key in the following file.
+`C:\Users\%Username%\.android\adbkey.pub`
+Open with an editor and copy the complete line and add it to the adb_keys file on your web server.
+
 # Tested ATV Devices/ROM's
 - X96 Mini (S905w) / a95xf1 (S905w) PoGoRom 1.5
 - TX9S (S912) PoGoRom 1.5.1
@@ -209,6 +221,7 @@ wooper_monitor.log
 If you will remove Wooper you need to delete the following files. For some files you need to mount the volume with read / write.
 ```
 /data/crontabs/root
+/data/local/wooper_adb_keys
 /data/local/wooper_download
 /data/local/wooper_versions
 /data/local/tmp/config.json
