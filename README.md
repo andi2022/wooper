@@ -202,15 +202,15 @@ https://github.com/andi2022/magisk_initd_service
    - Change `DeviceName` to the name you want on this device
 ```
 su -c 'file='/data/local/wooper_download' && \
-mount -o remount,rw / && \
 touch $file && \
 echo url=https://mydownloadfolder.com > $file && \
 echo authUser='username' >> $file && \
 echo authPass='password' >> $file && \
 echo device123 > /data/local/initDName && \
-/system/bin/curl -L -o /system/bin/wooper.sh -k -s https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh && \
-chmod +x /system/bin/wooper.sh && \
-/system/bin/wooper.sh -iw'
+mkdir /data/wooper && \
+/system/bin/curl -L -o /data/wooper/wooper.sh -k -s https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh && \
+chmod +x /data/wooper/wooper.sh && \
+/data/wooper/wooper.sh -iw'
 ```
  - If the script finishes successfuly and the device reboots, you can `adb disconnect` from it.
 
@@ -227,12 +227,12 @@ If you will remove Wooper you need to delete the following files. For some files
 /data/local/tmp/config.json
 /data/local/tmp/wooper.log
 /data/local/tmp/wooper_monitor.log
+/data/wooper/wooper.sh
+/data/wooper/wooper_new.sh
+/data/wooper/wooper_monitor.sh
+/data/wooper/ping_test.sh
 /sdcard/Download/exeggcute.apk
 /sdcard/Download/pogo.apk
-/system/bin/wooper.sh
-/system/bin/wooper_new.sh
-/system/bin/wooper_monitor.sh
-/system/bin/ping_test.sh
 /system/etc/init.d/55cron
 /system/etc/init.d/55wooper
 ```
