@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.10
+# version 1.7.11
 
 #Version checks
 Ver55wooper="1.2"
@@ -282,7 +282,7 @@ fi
     until /system/bin/curl -s -k -L --fail --show-error -o  $appdir/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
-    chmod +x /system/bin/ping_test.sh
+    chmod +x $appdir/ping_test.sh
     mkdir /data/crontabs || true
     touch /data/crontabs/root
     echo "15 * * * * /system/bin/ping_test.sh" > /data/crontabs/root
