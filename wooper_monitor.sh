@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.5
+# version 1.2.6
 
 logfile="/data/local/tmp/wooper_monitor.log"
 appdir="/data/wooper"
@@ -121,8 +121,9 @@ stop_pogo () {
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Killing pogo and clearing junk" >> $logfile
 }
 
-echo "`date +%Y-%m-%d_%T` [MONITORBOT] Starting exeggcute data monitor in 5 mins, loop is $monitor_interval seconds" >> $logfile
-sleep 300
+echo "`date +%Y-%m-%d_%T` [MONITORBOT] Starting exeggcute data monitor in 2 mins, loop is $monitor_interval seconds" >> $logfile
+[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] DEBUG sleep command is now starting" >> $logfile
+sleep 120
 [[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] DEBUG Starting data monitor" >> $logfile
 while :
 do
