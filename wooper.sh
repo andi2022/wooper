@@ -1,9 +1,9 @@
 #!/system/bin/sh
-# version 1.7.11
+# version 1.7.12
 
 #Version checks
 Ver55wooper="1.2"
-Ver55cron="1.2"
+Ver55cron="1.3"
 VerMonitor="1.2.3"
 
 logfile="/data/local/tmp/wooper.log"
@@ -41,7 +41,7 @@ android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 appdir="/data/wooper"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
-wooper_adb_keys="data/local/wooper_adb_keys"
+wooper_adb_keys="/data/local/wooper_adb_keys"
 adb_keys="/data/misc/adb/adb_keys"
 branchoverwrite="/data/local/tmp/branch"
 [[ -f /data/local/wooper_download ]] && wooper_download=$(/system/bin/grep url /data/local/wooper_download | awk -F "=" '{ print $NF }')
