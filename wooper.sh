@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.14
+# version 1.7.15
 
 #Version checks
 Ver55wooper="1.2"
@@ -285,7 +285,7 @@ fi
     chmod +x $appdir/ping_test.sh
     mkdir /data/crontabs || true
     touch /data/crontabs/root
-    echo "15 * * * * /system/bin/ping_test.sh" > /data/crontabs/root
+    echo "15 * * * * $appdir/ping_test.sh" > /data/crontabs/root
 	crond -b -c /data/crontabs
 	logger "cron jobs installed"
 
@@ -503,12 +503,12 @@ update_all(){
         /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
         # restart wooper monitor
-        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f /system/bin/wooper_monitor.sh ] ;then
-          checkMonitor=$(pgrep -f /system/bin/wooper_monitor.sh)
+        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $appdir/wooper_monitor.sh ] ;then
+          checkMonitor=$(pgrep -f $appdir/wooper_monitor.sh)
           if [ ! -z $checkMonitor ] ;then
             kill -9 $checkMonitor
             sleep 2
-            /system/bin/wooper_monitor.sh >/dev/null 2>&1 &
+            $appdir/wooper_monitor.sh >/dev/null 2>&1 &
             logger "wooper monitor restarted after PoGo update"
           fi
         fi
