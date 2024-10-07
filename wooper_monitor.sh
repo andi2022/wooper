@@ -21,10 +21,34 @@ updatecheck=0
 pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
 
-#Create logfile
-if [ ! -e /data/local/tmp/wooper_monitor.log ] ;then
-	touch /data/local/tmp/wooper_monitor.log
-fi
+#Create/Check logfile (Cleanup if bigger than 1MB)
+checklogfile() {
+	# Check if the logfile exists
+	if [ -f "$logfile" ]; then
+		# Get the size of the logfile in bytes
+		filesize=$(stat -c%s "$logfile")
+		
+		# Check if the filesize is greater than 1 MB (1048576 bytes)
+		if [ $filesize -gt 1048576 ]; then
+			# Delete the logfile
+			rm "$logfile"
+			
+			# Create a new logfile
+			touch "$logfile"
+			
+			# Change the ownership to 'shell'
+			chown shell "$logfile"
+
+      echo "`date +%Y-%m-%d_%T` $logfile was larger than 1 MB and has been replaced." >> $logfile 
+		fi
+	else
+		touch "$logfile"
+		chown shell "$logfile"
+    echo "`date +%Y-%m-%d_%T` $logfile created" >> $logfile 
+	fi
+}
+
+checklogfile
 
 # stderr to logfile
 exec 2>> $logfile

@@ -1,19 +1,43 @@
 #!/system/bin/sh
-# version 1.7.4
+# version 1.7.5
 
 #Version checks
-Ver55wooper="1.1"
-Ver55cron="1.1"
+Ver55wooper="1.2"
+Ver55cron="1.2"
 VerMonitor="1.2.2"
 
-android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
-
-#Create logfile
-if [ ! -e /data/local/tmp/wooper.log ] ;then
-    /system/bin/touch /data/local/tmp/wooper.log
-fi
-
 logfile="/data/local/tmp/wooper.log"
+
+#Create/Check logfile (Cleanup if bigger than 1MB)
+checklogfile() {
+	# Check if the logfile exists
+	if [ -f "$logfile" ]; then
+		# Get the size of the logfile in bytes
+		filesize=$(stat -c%s "$logfile")
+		
+		# Check if the filesize is greater than 1 MB (1048576 bytes)
+		if [ $filesize -gt 1048576 ]; then
+			# Delete the logfile
+			rm "$logfile"
+			
+			# Create a new logfile
+			touch "$logfile"
+			
+			# Change the ownership to 'shell'
+			chown shell "$logfile"
+
+      echo "`date +%Y-%m-%d_%T` $logfile was larger than 1 MB and has been replaced." >> $logfile 
+		fi
+	else
+		touch "$logfile"
+		chown shell "$logfile"
+    echo "`date +%Y-%m-%d_%T` $logfile created" >> $logfile 
+	fi
+}
+
+checklogfile
+
+android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 appdir="/data/wooper"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
@@ -86,6 +110,7 @@ cleanup_old_installdir(){
       logger "Delete old scripts in /system/bin after migration to $appdir"
       mount_system_rw
       rm -f /system/bin/wooper.sh
+      rm -f /system/bin/wooper_new.sh
       rm -f /system/bin/wooper_monitor.sh
       rm -f /system/bin/ping_test.sh
       mount_system_ro
@@ -635,7 +660,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
 fi
 
 # prevent wooper causing reboot loop. Add bypass ??
-if [ $(/system/bin/cat /data/local/tmp/wooper.log | /system/bin/grep `date +%Y-%m-%d` | /system/bin/grep rebooted | wc -l) -gt 20 ] ;then
+if [ $(/system/bin/cat $logfile | /system/bin/grep `date +%Y-%m-%d` | /system/bin/grep rebooted | wc -l) -gt 20 ] ;then
     logger "Device rebooted over 20 times today, wooper.sh signing out, see you tomorrow"
 	echo "`date +%Y-%m-%d_%T` Device rebooted over 20 times today, wooper.sh signing out, see you tomorrow"  >> $logfile
     exit 1
