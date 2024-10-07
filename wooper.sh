@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.7.5
+# version 1.7.6
 
 #Version checks
 Ver55wooper="1.2"
 Ver55cron="1.2"
-VerMonitor="1.2.2"
+VerMonitor="1.2.3"
 
 logfile="/data/local/tmp/wooper.log"
 
