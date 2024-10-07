@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.9
+# version 1.7.10
 
 #Version checks
 Ver55wooper="1.2"
@@ -279,7 +279,7 @@ fi
     logger "55cron installed"
 
     # install cron job
-    until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o  $appdir/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x /system/bin/ping_test.sh
@@ -631,7 +631,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
         until /system/bin/curl -s -k -L --fail --show-error -o  $appdir/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
-        chmod +x /system/bin/ping_test.sh
+        chmod +x $appdir/ping_test.sh
         mkdir /data/crontabs || true
         touch /data/crontabs/root
         echo "15 * * * * $appdir/ping_test.sh" > /data/crontabs/root
