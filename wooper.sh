@@ -118,6 +118,15 @@ cleanup_old_installdir(){
    fi 
 }
 
+delay_after_reboot(){
+  uptime_seconds=$(awk '{print $1}' /proc/uptime)
+  # Check if uptime is less than 120 seconds (2 minutes)
+  if (( $(echo "$uptime_seconds < 120" | bc -l) )); then
+      echo "`date +%Y-%m-%d_%T` Wait 30 seconds, safety delay" >> $logfile
+      sleep 30
+  fi
+}
+
 read_versionfile(){
 if [[ -f $wooper_versions ]] ;then
 discord_webhook=$(grep 'discord_webhook' $wooper_versions | awk -F "=" '{ print $NF }' | sed -e 's/^"//' -e 's/"$//')
@@ -564,8 +573,7 @@ until ping -c1 8.8.8.8 >/dev/null 2>/dev/null || ping -c1 1.1.1.1 >/dev/null 2>/
     sleep 10
 done
 echo "`date +%Y-%m-%d_%T` Internet connection available" >> $logfile
-echo "`date +%Y-%m-%d_%T` Wait 30 seconds, safety delay" >> $logfile
-sleep 30
+delay_after_reboot
 
 download_versionfile
 
