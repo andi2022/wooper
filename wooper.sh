@@ -617,7 +617,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
             sleep 2
         done
         chmod +x /system/etc/init.d/55cron
-        echo "`date +%Y-%m-%d_%T` 55cron installed, from master" >> $logfile
+        echo "`date +%Y-%m-%d_%T` 55cron installed" >> $logfile
 
         # install cron job
         until /system/bin/curl -s -k -L --fail --show-error -o  $appdir/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
