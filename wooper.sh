@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.12
+# version 1.7.13
 
 #Version checks
 Ver55wooper="1.2"
@@ -290,7 +290,7 @@ fi
 	logger "cron jobs installed"
 
 	# install wooper monitor
-	until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+	until /system/bin/curl -s -k -L --fail --show-error -o $appdir/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
 		sleep 2
 	done
 	chmod +x /system/bin/wooper_monitor.sh
