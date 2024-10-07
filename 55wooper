@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.0
+# version 1.1
 
 #Create logfile
 if [ ! -e /data/local/tmp/wooper.log ] ;then
@@ -9,4 +9,4 @@ echo "" >> /data/local/tmp/wooper.log
 echo "`date +%Y-%m-%d_%T` Device rebooted" >> /data/local/tmp/wooper.log
 
 # execute wooper.sh
-sh -x /system/bin/wooper.sh -ua
+sh -x /data/wooper/wooper.sh -ua

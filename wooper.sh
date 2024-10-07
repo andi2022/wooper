@@ -1,10 +1,10 @@
-logfil#!/system/bin/sh
-# version 1.7.0
+#!/system/bin/sh
+# version 1.7.1
 
 #Version checks
 Ver55wooper="1.0"
-Ver55cron="1.0"
-VerMonitor="1.2.0"
+Ver55cron="1.1"
+VerMonitor="1.2.1"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -14,6 +14,7 @@ if [ ! -e /data/local/tmp/wooper.log ] ;then
 fi
 
 logfile="/data/local/tmp/wooper.log"
+appdir="/data/wooper"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
 wooper_adb_keys="data/local/wooper_adb_keys"
@@ -51,6 +52,30 @@ if [[ ! -z $discord_webhook ]] ;then
   fi
 else
   echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
+fi
+}
+
+appdir() {
+  if [ ! -d "$appdir" ]; then
+    # Create the directory
+    mkdir -p "$appdir"
+    logger "New App Directory $appdir created."
+  fi
+}
+
+migrate_wooper() {
+if [ -f /system/bin/wooper.sh ] && [ ! -f $appdir/wooper.sh ]; then
+    cp /system/bin/wooper.sh $appdir/wooper.sh
+    chmod +x $appdir/wooper.sh
+    logger "wooper.sh copied to new path $appdir"
+fi
+}
+
+migrate_wooper_monitor() {
+  if [ -f /system/bin/wooper_monitor.sh ] && [ ! -f $appdir/wooper_monitor.sh ]; then
+    cp /system/bin/wooper_monitor.sh $appdir/wooper_monitor.sh
+    chmod +x $appdir/wooper_monitor.sh
+    logger "wooper_monitor.sh copied to new path $appdir"
 fi
 }
 
@@ -505,20 +530,24 @@ sleep 30
 
 download_versionfile
 
+#Create new appdir if it does not exist.
+appdir
+
+migrate_wooper
 #download latest wooper.sh
 if [[ $(basename $0) != "wooper_new.sh" ]] ;then
     mount_system_rw
-    oldsh=$(head -2 /system/bin/wooper.sh | /system/bin/grep '# version' | awk '{ print $NF }')
-    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    oldsh=$(head -2 $appdir/wooper.sh | /system/bin/grep '# version' | awk '{ print $NF }')
+    until /system/bin/curl -s -k -L --fail --show-error -o $appdir/wooper_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
-    chmod +x /system/bin/wooper_new.sh
-    newsh=$(head -2 /system/bin/wooper_new.sh | /system/bin/grep '# version' | awk '{ print $NF }')
+    chmod +x $appdir/wooper_new.sh
+    newsh=$(head -2 $appdir/wooper_new.sh | /system/bin/grep '# version' | awk '{ print $NF }')
     if [[ "$oldsh" != "$newsh" ]] ;then
         logger "wooper.sh updated $oldsh=>$newsh | Github branch $branch, restarting script"
-        cp /system/bin/wooper_new.sh /system/bin/wooper.sh
+        cp $appdir/wooper_new.sh $appdir/wooper.sh
         mount_system_ro
-        /system/bin/wooper_new.sh $@
+        $appdir/wooper_new.sh $@
         exit 1
     fi
 fi
@@ -566,26 +595,25 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
     fi
 fi
 
+migrate_wooper_monitor
 #update wooper monitor if needed
 if [[ $(basename $0) = "wooper_new.sh" ]] ;then
-  [ -f /system/bin/wooper_monitor.sh ] && oldMonitor=$(head -2 /system/bin/wooper_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
+  [ -f $appdir/wooper_monitor.sh ] && oldMonitor=$(head -2 $appdir/wooper_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
   if [ $VerMonitor != $oldMonitor ] ;then
-    mount_system_rw
-    until /system/bin/curl -s -k -L --fail --show-error -o /system/bin/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until /system/bin/curl -s -k -L --fail --show-error -o $appdir/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
-    chmod +x /system/bin/wooper_monitor.sh
-    mount_system_ro
-    newMonitor=$(head -2 /system/bin/wooper_monitor.sh | grep '# version' | awk '{ print $NF }')
+    chmod +x $appdir/wooper_monitor.sh
+    newMonitor=$(head -2 $appdir/wooper_monitor.sh | grep '# version' | awk '{ print $NF }')
 	logger "wooper monitor updated $oldMonitor => $newMonitor | Github branch $branch"
 	
     # restart wooper monitor
-    if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f /system/bin/wooper_monitor.sh ] ;then
-      checkMonitor=$(pgrep -f /system/bin/wooper_monitor.sh)
+    if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $appdir/wooper_monitor.sh ] ;then
+      checkMonitor=$(pgrep -f $appdir/wooper_monitor.sh)
       if [ ! -z $checkMonitor ] ;then
         kill -9 $checkMonitor
         sleep 2
-        /system/bin/wooper_monitor.sh >/dev/null 2>&1 &
+        $appdir/wooper_monitor.sh >/dev/null 2>&1 &
 		logger "wooper monitor restarted"
       fi
     fi
@@ -625,10 +653,10 @@ if [[ -d /data/data/com.gocheats.launcher ]] && [[ ! -s $exeggcute ]] ;then
 fi
 
 # enable wooper monitor
-if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }' | awk '{ gsub(/ /,""); print }') == "true" ]] && [ -f /system/bin/wooper_monitor.sh ] ;then
-  checkMonitor=$(pgrep -f /system/bin/wooper_monitor.sh)
+if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }' | awk '{ gsub(/ /,""); print }') == "true" ]] && [ -f $appdir/wooper_monitor.sh ] ;then
+  checkMonitor=$(pgrep -f $appdir/wooper_monitor.sh)
   if [ -z $checkMonitor ] ;then
-    /system/bin/wooper_monitor.sh >/dev/null 2>&1 &
+    $appdir/wooper_monitor.sh >/dev/null 2>&1 &
     echo "`date +%Y-%m-%d_%T` wooper.sh: wooper monitor enabled" >> $logfile
   fi
 fi
