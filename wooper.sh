@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.8
+# version 1.7.9
 
 #Version checks
 Ver55wooper="1.2"
@@ -119,10 +119,10 @@ cleanup_old_installdir(){
 }
 
 delay_after_reboot(){
-  uptime_seconds=$(awk '{print $1}' /proc/uptime)
+  uptime_seconds=$(awk '{print int($1)}' /proc/uptime)
   # Check if uptime is less than 120 seconds (2 minutes)
-  if (( $(echo "$uptime_seconds < 120" | bc -l) )); then
-      echo "`date +%Y-%m-%d_%T` Wait 30 seconds, safety delay" >> $logfile
+  if [ "$uptime_seconds" -lt 120 ]; then
+      echo "$(date +%Y-%m-%d_%T) Wait 30 seconds, safety delay" >> $logfile
       sleep 30
   fi
 }
