@@ -3,7 +3,7 @@
 
 #Version checks
 Ver55wooper="1.1"
-Ver55cron="1.0"
+Ver55cron="1.1"
 VerMonitor="1.2.1"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
@@ -581,13 +581,13 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
         echo "`date +%Y-%m-%d_%T` 55cron installed, from master" >> $logfile
 
         # install cron job
-        until /system/bin/curl -s -k -L --fail --show-error -o  /system/bin/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
+        until /system/bin/curl -s -k -L --fail --show-error -o  $appdir/ping_test.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/ping_test.sh || { echo "`date +%Y-%m-%d_%T` Download ping_test.sh failed, exit script" >> $logfile ; exit 1; } ;do
             sleep 2
         done
         chmod +x /system/bin/ping_test.sh
         mkdir /data/crontabs || true
         touch /data/crontabs/root
-        echo "15 * * * * /system/bin/ping_test.sh" > /data/crontabs/root
+        echo "15 * * * * $appdir/ping_test.sh" > /data/crontabs/root
 		crond -b -c /data/crontabs		
         mount_system_ro
         new55=$(head -2 /system/etc/init.d/55cron | /system/bin/grep '# version' | awk '{ print $NF }')
