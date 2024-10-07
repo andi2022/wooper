@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.3
+# version 1.2.4
 
 logfile="/data/local/tmp/wooper_monitor.log"
 appdir="/data/wooper"
@@ -133,7 +133,7 @@ do
 		sleep 60
 	done
 
-	[[ -z $origin ]] && origin=$(cat $aconf | tr , '\n' | grep -w 'deviceName' | awk -F "\"" '{ print $4 }')
+	[[ -z $origin ]] && origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
 
         updatecheck=$(($updatecheck+1))
         if [[ $updatecheck -gt $update_check ]] ;then
