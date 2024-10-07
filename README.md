@@ -207,7 +207,7 @@ echo url=https://mydownloadfolder.com > $file && \
 echo authUser='username' >> $file && \
 echo authPass='password' >> $file && \
 echo device123 > /data/local/initDName && \
-mkdir /data/wooper && \
+mkdir -p /data/wooper && \
 /system/bin/curl -L -o /data/wooper/wooper.sh -k -s https://raw.githubusercontent.com/andi2022/wooper/main/wooper.sh && \
 chmod +x /data/wooper/wooper.sh && \
 /data/wooper/wooper.sh -iw'
