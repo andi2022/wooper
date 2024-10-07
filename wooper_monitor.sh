@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.4
+# version 1.2.5
 
 logfile="/data/local/tmp/wooper_monitor.log"
 appdir="/data/wooper"
@@ -123,10 +123,12 @@ stop_pogo () {
 
 echo "`date +%Y-%m-%d_%T` [MONITORBOT] Starting exeggcute data monitor in 5 mins, loop is $monitor_interval seconds" >> $logfile
 sleep 300
+[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] DEBUG Starting data monitor" >> $logfile
 while :
 do
 	[[ $useMonitor == "false" ]] && echo "`date +%Y-%m-%d_%T` wooper_monitor stopped" >> $logfile && exit 1
 
+	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] DEBUG Internet check" >> $logfile
 	until ping -c1 8.8.8.8 >/dev/null 2>/dev/null
 	do
 		[[ $( awk '/./{line=$0} END{print line}' $logfile | grep 'No internet' | wc -l) != 1 ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] No internet, pay the bill?" >> $logfile
@@ -156,6 +158,7 @@ do
 	fi
 
 	# Capture the logcat output
+	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Logcat analysis" >> $logfile
 	log_output=$(logcat -d -s "Exeggcute")
 
 	# Check if the logcat contains a mismatch game version.
@@ -197,5 +200,6 @@ do
 		sleep 20
 	fi
 
+	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] wait $monitor_interval seconds before recheck" >> $logfile
 	sleep $monitor_interval
 done

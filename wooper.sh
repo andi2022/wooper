@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.16
+# version 1.7.17
 
 #Version checks
 Ver55wooper="1.2"
