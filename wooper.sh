@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.7
+# version 1.7.8
 
 #Version checks
 Ver55wooper="1.2"
@@ -83,7 +83,7 @@ appdir() {
   if [ ! -d "$appdir" ]; then
     # Create the directory
     mkdir -p "$appdir"
-    logger "New App Directory $appdir created."
+    logger "new app directory $appdir created."
   fi
 }
 
