@@ -1,7 +1,8 @@
 #!/system/bin/sh
-# version 1.2.1
+# version 1.2.2
 
 logfile="/data/local/tmp/wooper_monitor.log"
+appdir="/data/wooper"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
 origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
@@ -78,7 +79,7 @@ update_check=$((update_check_interval/monitor_interval))
 
 check_for_updates() {
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Checking for updates" >> $logfile
-	/system/bin/wooper.sh -ua
+	$appdir/wooper.sh -ua
 	sleep 20
 }
 
@@ -123,7 +124,7 @@ do
 	else
 			echo "`date +%Y-%m-%d_%T` [MONITORBOT] Exeggcute config.json does not exist or is empty! Let's fix that!" >> $logfile
 			[[ $recreate_exeggcute_config == "true" ]] && logger "exeggcute config.json does not exist or is empty! Let's fix that!"
-			/system/bin/wooper.sh -ic
+			$appdir/wooper.sh -ic
 			[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Fixed config" >> $logfile
 			stop_start_exeggcute
 			sleep $monitor_interval

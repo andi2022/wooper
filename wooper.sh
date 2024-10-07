@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 1.7.3
+# version 1.7.4
 
 #Version checks
 Ver55wooper="1.1"
 Ver55cron="1.1"
-VerMonitor="1.2.1"
+VerMonitor="1.2.2"
 
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 
@@ -77,6 +77,20 @@ migrate_wooper_monitor() {
     chmod +x $appdir/wooper_monitor.sh
     logger "wooper_monitor.sh copied to new path $appdir"
 fi
+}
+
+cleanup_old_installdir(){
+  BASE_PATH=$(dirname "$0")
+   if [ -f /system/bin/wooper.sh ]; then
+    if [ "$BASE_PATH" = "$appdir" ]; then
+      logger "Delete old scripts in /system/bin after migration to $appdir"
+      mount_system_rw
+      rm -f /system/bin/wooper.sh
+      rm -f /system/bin/wooper_monitor.sh
+      rm -f /system/bin/ping_test.sh
+      mount_system_ro
+    fi
+   fi 
 }
 
 read_versionfile(){
@@ -679,6 +693,8 @@ for i in "$@" ;do
     esac
 done
 
+#Remove Scripts in old install dir (/system/bin) after migration to new appdir
+cleanup_old_installdir
 
 (( $reboot )) && reboot_device
 exit
