@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.22
+# version 1.7.23
 
 #Version checks
 Ver55wooper="1.2"
@@ -652,7 +652,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
     done
     chmod +x $appdir/wooper_monitor.sh
     newMonitor=$(head -2 $appdir/wooper_monitor.sh | grep '# version' | awk '{ print $NF }')
-	logger "wooper monitor updated $oldMonitor => $newMonitor | Github branch $branch"
+	  logger "wooper monitor updated $oldMonitor => $newMonitor | Github branch $branch"
 	
     # restart wooper monitor
     if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $appdir/wooper_monitor.sh ] ;then

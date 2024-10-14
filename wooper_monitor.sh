@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.2.6
+# version 1.2.7
 
 logfile="/data/local/tmp/wooper_monitor.log"
 appdir="/data/wooper"
