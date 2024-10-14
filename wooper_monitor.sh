@@ -121,6 +121,12 @@ stop_pogo () {
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Killing pogo and clearing junk" >> $logfile
 }
 
+reboot_device(){
+    logger "Reboot device"
+    sleep 10
+    /system/bin/reboot
+}
+
 echo "`date +%Y-%m-%d_%T` [MONITORBOT] Starting exeggcute data monitor in 2 mins, loop is $monitor_interval seconds" >> $logfile
 [[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] DEBUG sleep command is now starting" >> $logfile
 sleep 120
@@ -172,6 +178,13 @@ do
 	if echo "$log_output" | grep -q "License validation failed!"; then
 		logger "License Validation error found"
 		logcat -c
+	fi
+
+	# Check if the logcat contains a (/data/user/0/com.gocheats.launcher/files/Injector (Text file busy))
+	if echo "$log_output" | grep -q "(/data/user/0/com.gocheats.launcher/files/Injector (Text file busy))"; then
+		logcat -c
+		logger "(/data/user/0/com.gocheats.launcher/files/Injector (Text file busy))"
+		reboot_device
 	fi
 
     # Check if exeggcute is not running
