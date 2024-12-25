@@ -3,5 +3,5 @@ name=Wooper
 version=v1.0.0
 versionCode=10000
 author=andi2022
-description=Installs useful binaries: bash, nano, strace, eventrec and tcpdump. Also optionally installs ATV resources.
+description=Installs wooper and useful binaries: bash, nano, strace, eventrec and tcpdump.
 minMagisk=23000
