@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.0.12
+# version 2.1.0
 
 #Version checks
 VerService="1.0.3"
