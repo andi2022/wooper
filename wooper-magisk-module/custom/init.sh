@@ -1,5 +1,4 @@
 #!/system/bin/sh
-# Forked from ClawOfDead from his PoGoRom's (3.0.0)
 # Version 1.0.0
 
 magiskcmd="/bin/magisk"
