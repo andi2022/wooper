@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.0.1
+# version 2.0.2
 
 #Version checks
 VerInit="1.0.1"
