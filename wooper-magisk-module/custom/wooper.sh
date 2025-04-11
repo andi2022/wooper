@@ -640,8 +640,8 @@ if [[ $(basename $0) = "wooper_new.sh" ]] ;then
     done
     chmod +x $MODDIR/wooper_gc_monitor.sh
     dos2unix $MODDIR/wooper_gc_monitor.sh
-    logger "wooper.sh migrated to wooper_gc.sh | Github branch $branch, restarting script"
-    "$MODDIR/wooper_gc.sh" $@
+    logger "wooper.sh migrated to wooper_gc.sh | Github branch $branch, restarting device"
+    reboot_device
     exit 1
 fi
 
