@@ -6,6 +6,7 @@ pogopkg="com.nianticlabs.pokemongo"
 dbupdate="/data/data/com.android.vending/databases/auto_update.db"
 dbdata="X'0a19636f6d2e6e69616e7469636c6162732e706f6b656d6f6e676f12001801200228e5a3d8c40738eb87a0c0b4314000480050005a0072007a008201008a010c08f6d1c4a90610c0e9e9eb029001009a0100a20100aa010c08becec2a906108099b6fe02'"
 initdir=/data/init
+init_config="/data/local/tmp/init.config"
 configdir=/data/local/tmp
 logdir=/data/local/tmp/init
 logfile=$logdir/initrom.log

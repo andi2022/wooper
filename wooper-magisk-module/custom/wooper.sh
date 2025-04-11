@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.0.4
+# version 2.0.5
 
 #Version checks
 VerInit="1.0.1"
@@ -41,6 +41,7 @@ appdir="/data/wooper"
 MODDIR="/data/adb/modules/wooper"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
+init_config="/data/local/tmp/init.config"
 base_wooper_config="/data/local/tmp/base_wooper.config"
 wooper_adb_keys="/data/local/wooper_adb_keys"
 adb_keys="/data/misc/adb/adb_keys"
@@ -49,12 +50,24 @@ pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
 reboot="0"
 
-source $base_wooper_config
-export device_name
-export wooper_url
-export wooper_user
-export wooper_pass
-export workerscount_override
+
+if [ -f "$init_config" ]; then
+  source $init_config
+  export device_name
+  export wooper_url
+  export wooper_user
+  export wooper_pass
+  export workerscount_override
+fi
+
+if [ -f "$base_wooper_config" ]; then
+  source $base_wooper_config
+  export device_name
+  export wooper_url
+  export wooper_user
+  export wooper_pass
+  export workerscount_override
+fi
 
 # stderr to logfile
 exec 2>> $logfile
@@ -167,8 +180,8 @@ mount_system_ro() {
 
 download_versionfile() {
 # verify download credential file and set download
-if [[ ! -f $base_wooper_config ]] ;then
-    echo "`date +%Y-%m-%d_%T` File $base_wooper_config not found, exit script" >> $logfile && exit 1
+if [[ ! -f $init_config ]] ;then
+    echo "`date +%Y-%m-%d_%T` File $init_config not found, exit script" >> $logfile && exit 1
 else
     if [[ $wooper_user == "" ]] ;then
         download="/system/bin/curl -s -k -L --fail --show-error -o"
@@ -209,6 +222,15 @@ copy_adb_keys_if_newer() {
     else
       echo "$(date +%Y-%m-%d_%T) latest adb_keys file already installed"  >> "$logfile"
     fi
+  fi
+}
+
+migrate_base_config() {
+  if [ ! -f "$init_config" ] && [ -f "$base_wooper_config" ]; then
+    mv "$base_wooper_config" "$init_config"
+    logger "$base_wooper_config has been migrated to $init_config"
+    $logger "restarting $0"
+    exec "$0"
   fi
 }
 
@@ -538,6 +560,7 @@ downgrade_pogo(){
 }
 
 ########## Execution
+migrate_base_config
 download_versionfile
 
 #update wooper init
