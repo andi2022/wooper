@@ -2,7 +2,7 @@
 # version 2.0.1
 
 #Version checks
-VerInit="1.0.0"
+VerInit="1.0.1"
 VerMonitor="1.3.0"
 
 logfile="/data/local/tmp/wooper.log"
@@ -542,7 +542,7 @@ download_versionfile
 
 #update wooper init
 if [[ $(basename $0) = "wooper_new.sh" ]]; then
-  [ -f $MODDIR/init.sh ] && oldInit=$(head -2 $MODDIR/init.sh | grep '# version' | awk '{ print $NF }') || oldInit="0"
+  [ -f $MODDIR/init.sh ] && oldInit=$(head -3 $MODDIR/init.sh | grep '# version' | awk '{ print $NF }') || oldInit="0"
   if [ $VerMonitor != $oldInit ]; then
     until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/init.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/init.sh || { echo "`date +%Y-%m-%d_%T` Download init.sh failed, exit script" >> $logfile ; exit 1; }; do
       sleep 2
