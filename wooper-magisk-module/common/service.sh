@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.0.0
+# version 1.0.1
 
 # Do NOT assume where your module will be located.
 # ALWAYS use $MODDIR if you need to know where this script
@@ -9,6 +9,12 @@
 MODDIR=${0%/*}
 
 logfile="/data/local/tmp/wooper.log"
+service_config="/data/local/tmp/service.config"
+
+if [ -f "$service_config" ]; then
+  source $service_config
+  export mitm
+fi
 
 #Create/Check logfile (Cleanup if bigger than 1MB)
 checklogfile() {

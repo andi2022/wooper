@@ -2,6 +2,7 @@
 # version 2.0.5
 
 #Version checks
+VerService="1.0.1"
 VerInit="1.0.1"
 VerMonitor="1.3.0"
 
@@ -41,6 +42,7 @@ appdir="/data/wooper"
 MODDIR="/data/adb/modules/wooper"
 exeggcute="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
+service_config="/data/local/tmp/service.config"
 init_config="/data/local/tmp/init.config"
 base_wooper_config="/data/local/tmp/base_wooper.config"
 wooper_adb_keys="/data/local/wooper_adb_keys"
@@ -50,6 +52,14 @@ pogo_package_samsung="com.nianticlabs.pokemongo.ares"
 pogo_package_google="com.nianticlabs.pokemongo"
 reboot="0"
 
+if [ -f "$service_config" ]; then
+  source $service_config
+  export device_name
+  export wooper_url
+  export wooper_user
+  export wooper_pass
+  export workerscount_override
+fi
 
 if [ -f "$init_config" ]; then
   source $init_config
@@ -180,8 +190,8 @@ mount_system_ro() {
 
 download_versionfile() {
 # verify download credential file and set download
-if [[ ! -f $init_config ]] ;then
-    echo "`date +%Y-%m-%d_%T` File $init_config not found, exit script" >> $logfile && exit 1
+if [[ ! -f $service_config ]] ;then
+    echo "`date +%Y-%m-%d_%T` File $service_config not found, exit script" >> $logfile && exit 1
 else
     if [[ $wooper_user == "" ]] ;then
         download="/system/bin/curl -s -k -L --fail --show-error -o"
@@ -233,6 +243,16 @@ migrate_base_config() {
     exec "$0"
   fi
 }
+
+migrate_init_config() {
+  if [ ! -f "$service_config" ] && [ -f "$init_config" ]; then
+    mv "$init_config" "$service_config"
+    logger "$init_config has been migrated to $service_config"
+    logger "restarting $0"
+    exec "$0"
+  fi
+}
+
 
 install_wooper(){
 download_versionfile
@@ -561,7 +581,22 @@ downgrade_pogo(){
 
 ########## Execution
 migrate_base_config
+migrate_init_config
 download_versionfile
+
+#update wooper service script
+if [[ $(basename $0) = "wooper_new.sh" ]]; then
+  [ -f $MODDIR/service.sh ] && oldService=$(head -3 $MODDIR/service.sh | grep -i '# version' | awk '{ print $NF }') || oldService="0"
+  if [ $VerService != $oldService ]; then
+    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/service.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/common/service.sh || { echo "`date +%Y-%m-%d_%T` Download service.sh failed, exit script" >> $logfile ; exit 1; }; do
+      sleep 2
+    done
+    chmod +x $MODDIR/service.sh
+    dos2unix $MODDIR/service.sh
+    newService=$(head -2 $MODDIR/service.sh | grep '# version' | awk '{ print $NF }')
+    logger "wooper service script updated $oldService => $newService | Github branch $branch"
+  fi
+fi
 
 #update wooper init
 if [[ $(basename $0) = "wooper_new.sh" ]]; then
