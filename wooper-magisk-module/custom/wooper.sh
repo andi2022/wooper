@@ -229,7 +229,7 @@ migrate_base_config() {
   if [ ! -f "$init_config" ] && [ -f "$base_wooper_config" ]; then
     mv "$base_wooper_config" "$init_config"
     logger "$base_wooper_config has been migrated to $init_config"
-    $logger "restarting $0"
+    logger "restarting $0"
     exec "$0"
   fi
 }
