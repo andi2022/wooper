@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.1.0
+# version 2.1.1
 
 #Version checks
 VerService="1.0.3"
@@ -326,7 +326,7 @@ fi
 }
 
 install_config(){
-    until $download /data/local/tmp/config.json $wooper_url/config.json || { echo "`date +%Y-%m-%d_%T` $download /data/local/tmp/config.json $wooper_url/config.json" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute config file failed, exit script" >> $logfile ; exit 1; } ;do
+    until $download /data/local/tmp/config.json $wooper_url/gc_config.json || { echo "`date +%Y-%m-%d_%T` $download /data/local/tmp/config.json $wooper_url/gc_config.json" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute config file failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
     /system/bin/sed -i 's,dummy,'$device_name',g' $exeggcute
