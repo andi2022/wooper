@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.0.11
+# version 2.0.12
 
 #Version checks
 VerService="1.0.3"
@@ -254,17 +254,17 @@ migrate_init_config() {
 }
 
 cleanup_old_wooper_scripts() {
-  if [ -f "$MODDIR\wooper.sh" ]; then
-    rm -f $MODDIR\wooper.sh
-    logger "$MODDIR\wooper.sh removed"
+  if [ -f "$MODDIR/wooper.sh" ]; then
+    rm -f $MODDIR/wooper.sh
+    logger "$MODDIR/wooper.sh removed"
   fi
-  if [ -f "$MODDIR\wooper_new.sh" ]; then
-    rm -f $MODDIR\wooper_new.sh
-    logger "$MODDIR\wooper_new.sh removed"
+  if [ -f "$MODDIR/wooper_new.sh" ]; then
+    rm -f $MODDIR/wooper_new.sh
+    logger "$MODDIR/wooper_new.sh removed"
   fi
-  if [ -f "$MODDIR\wooper_monitor.sh" ]; then
-    rm -f $MODDIR\wooper_monitor.sh
-    logger "$MODDIR\wooper_monitor.sh removed"
+  if [ -f "$MODDIR/wooper_monitor.sh" ]; then
+    rm -f $MODDIR/wooper_monitor.sh
+    logger "$MODDIR/wooper_monitor.sh removed"
   fi
 }
 
