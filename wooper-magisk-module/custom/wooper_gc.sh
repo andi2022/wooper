@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 2.0.7
+# version 2.0.8
 
 #Version checks
 VerService="1.0.2"
-VerInit="1.0.2"
-VerMonitor="1.3.0"
+VerInit="1.0.1"
+VerMonitor="1.3.1"
 
 logfile="/data/local/tmp/wooper.log"
 
@@ -82,7 +82,7 @@ fi
 # stderr to logfile
 exec 2>> $logfile
 
-# add wooper.sh command to log
+# add wooper_gc.sh command to log
 echo "" >> $logfile
 echo "`date +%Y-%m-%d_%T` ## Executing $(basename $0) $@" >> $logfile
 
@@ -92,14 +92,14 @@ echo "`date +%Y-%m-%d_%T` ## Executing $(basename $0) $@" >> $logfile
 # logger
 logger() {
 if [[ ! -z $discord_webhook ]] ;then
-  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
+  echo "`date +%Y-%m-%d_%T` wooper_gc.sh: $1" >> $logfile
   if [[ -z $device_name ]] ;then
-    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
+    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_gc.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
   else
-    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper.sh\", \"content\": \" $device_name: $1 \"}"  $discord_webhook &>/dev/null
+    curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_gc.sh\", \"content\": \" $device_name: $1 \"}"  $discord_webhook &>/dev/null
   fi
 else
-  echo "`date +%Y-%m-%d_%T` wooper.sh: $1" >> $logfile
+  echo "`date +%Y-%m-%d_%T` wooper_gc.sh: $1" >> $logfile
 fi
 }
 
@@ -253,6 +253,7 @@ migrate_init_config() {
   fi
 }
 
+
 install_wooper(){
 download_versionfile
 
@@ -264,10 +265,10 @@ fi
 
 
 	# install wooper monitor
-	until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+	until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
 		sleep 2
 	done
-	chmod +x $MODDIR/wooper_monitor.sh
+	chmod +x $MODDIR/wooper_gc_monitor.sh
 	logger "wooper monitor installed"
     mount_system_ro
 
@@ -515,12 +516,12 @@ update_all(){
         /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
         logger "PoGo $pversions, launcher started"
         # restart wooper monitor
-        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $MODDIR/wooper_monitor.sh ] ;then
-          checkMonitor=$(pgrep -f $MODDIR/wooper_monitor.sh)
+        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $MODDIR/wooper_gc_monitor.sh ] ;then
+          checkMonitor=$(pgrep -f $MODDIR/wooper_gc_monitor.sh)
           if [ ! -z $checkMonitor ] ;then
             kill -9 $checkMonitor
             sleep 2
-            $MODDIR/wooper_monitor.sh >/dev/null 2>&1 &
+            $MODDIR/wooper_gc_monitor.sh >/dev/null 2>&1 &
             logger "wooper monitor restarted after PoGo update"
           fi
         fi
@@ -584,7 +585,7 @@ migrate_init_config
 download_versionfile
 
 #update wooper service script
-if [[ $(basename $0) = "wooper_new.sh" ]]; then
+if [[ $(basename $0) = "wooper_gc_new.sh" ]]; then
   [ -f $MODDIR/service.sh ] && oldService=$(head -3 $MODDIR/service.sh | grep -i '# version' | awk '{ print $NF }') || oldService="0"
   if [ $VerService != $oldService ]; then
     until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/service.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/common/service.sh || { echo "`date +%Y-%m-%d_%T` Download service.sh failed, exit script" >> $logfile ; exit 1; }; do
@@ -598,7 +599,7 @@ if [[ $(basename $0) = "wooper_new.sh" ]]; then
 fi
 
 #update wooper init
-if [[ $(basename $0) = "wooper_new.sh" ]]; then
+if [[ $(basename $0) = "wooper_gc_new.sh" ]]; then
   [ -f $MODDIR/init.sh ] && oldInit=$(head -3 $MODDIR/init.sh | grep -i '# version' | awk '{ print $NF }') || oldInit="0"
   if [ $VerInit != $oldInit ]; then
     until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/init.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/init.sh || { echo "`date +%Y-%m-%d_%T` Download init.sh failed, exit script" >> $logfile ; exit 1; }; do
@@ -611,59 +612,43 @@ if [[ $(basename $0) = "wooper_new.sh" ]]; then
   fi
 fi
 
-#download latest wooper.sh
-if [[ $(basename $0) != "wooper_new.sh" ]] ;then
-    oldsh=$(head -2 $MODDIR/wooper.sh | /system/bin/grep '# version' | awk '{ print $NF }')
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper.sh || { echo "`date +%Y-%m-%d_%T` Download wooper.sh failed, exit script" >> $logfile ; exit 1; } ;do
+#download latest wooper_gc.sh
+if [[ $(basename $0) != "wooper_gc_new.sh" ]] ;then
+    oldsh=$(head -2 $MODDIR/wooper_gc.sh | /system/bin/grep '# version' | awk '{ print $NF }')
+    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
-    chmod +x $MODDIR/wooper_new.sh
-    dos2unix $MODDIR/wooper_new.sh
-    newsh=$(head -2 $MODDIR/wooper_new.sh | /system/bin/grep '# version' | awk '{ print $NF }')
+    chmod +x $MODDIR/wooper_gc_new.sh
+    dos2unix $MODDIR/wooper_gc_new.sh
+    newsh=$(head -2 $MODDIR/wooper_gc_new.sh | /system/bin/grep '# version' | awk '{ print $NF }')
     if [[ "$oldsh" != "$newsh" ]] ;then
-        logger "wooper.sh updated $oldsh=>$newsh | Github branch $branch, restarting script"
-        cp $MODDIR/wooper_new.sh $MODDIR/wooper.sh
-        "$MODDIR/wooper_new.sh" $@
+        logger "wooper_gc.sh updated $oldsh=>$newsh | Github branch $branch, restarting script"
+        cp $MODDIR/wooper_gc_new.sh $MODDIR/wooper_gc.sh
+        "$MODDIR/wooper_gc_new.sh" $@
         exit 1
     fi
 fi
 
-#migrate wooper.sh to wooper_gc.sh
-if [[ $(basename $0) = "wooper_new.sh" ]] ;then
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc.sh failed, exit script" >> $logfile ; exit 1; } ;do
-        sleep 2
-    done
-    chmod +x $MODDIR/wooper_gc.sh
-    dos2unix $MODDIR/wooper_gc.sh
+
+#update wooper monitor if needed
+if [[ $(basename $0) = "wooper_gc_new.sh" ]]; then
+  [ -f $MODDIR/wooper_gc_monitor.sh ] && oldMonitor=$(head -2 $MODDIR/wooper_gc_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
+  if [ $VerMonitor != $oldMonitor ]; then
     until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc_monitor.sh failed, exit script" >> $logfile ; exit 1; }; do
       sleep 2
     done
     chmod +x $MODDIR/wooper_gc_monitor.sh
     dos2unix $MODDIR/wooper_gc_monitor.sh
-    logger "wooper.sh migrated to wooper_gc.sh | Github branch $branch, restarting script"
-    "$MODDIR/wooper_gc.sh" $@
-    exit 1
-fi
-
-#update wooper monitor if needed
-if [[ $(basename $0) = "wooper_new.sh" ]]; then
-  [ -f $MODDIR/wooper_monitor.sh ] && oldMonitor=$(head -2 $MODDIR/wooper_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
-  if [ $VerMonitor != $oldMonitor ]; then
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_monitor.sh failed, exit script" >> $logfile ; exit 1; }; do
-      sleep 2
-    done
-    chmod +x $MODDIR/wooper_monitor.sh
-    dos2unix $MODDIR/wooper_monitor.sh
-    newMonitor=$(head -2 $MODDIR/wooper_monitor.sh | grep '# version' | awk '{ print $NF }')
+    newMonitor=$(head -2 $MODDIR/wooper_gc_monitor.sh | grep '# version' | awk '{ print $NF }')
     logger "wooper monitor updated $oldMonitor => $newMonitor | Github branch $branch"
     
     # restart wooper monitor
-    if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $MODDIR/wooper_monitor.sh ]; then
-      checkMonitor=$(pgrep -f $MODDIR/wooper_monitor.sh)
+    if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $MODDIR/wooper_gc_monitor.sh ]; then
+      checkMonitor=$(pgrep -f $MODDIR/wooper_gc_monitor.sh)
       if [ ! -z $checkMonitor ]; then
         kill -9 $checkMonitor
         sleep 2
-        "$MODDIR/wooper_monitor.sh" >/dev/null 2>&1 &
+        "$MODDIR/wooper_gc_monitor.sh" >/dev/null 2>&1 &
         logger "wooper monitor restarted"
       fi
     fi
@@ -672,8 +657,8 @@ fi
 
 # prevent wooper causing reboot loop. Add bypass ??
 if [ $(/system/bin/cat $logfile | /system/bin/grep `date +%Y-%m-%d` | /system/bin/grep rebooted | wc -l) -gt 50 ] ;then
-    logger "Device rebooted over 50 times today, wooper.sh signing out, see you tomorrow"
-	echo "`date +%Y-%m-%d_%T` Device rebooted over 50 times today, wooper.sh signing out, see you tomorrow"  >> $logfile
+    logger "Device rebooted over 50 times today, wooper_gc.sh signing out, see you tomorrow"
+	echo "`date +%Y-%m-%d_%T` Device rebooted over 50 times today, wooper_gc.sh signing out, see you tomorrow"  >> $logfile
     exit 1
 fi
 
@@ -704,11 +689,11 @@ if [[ -d /data/data/com.gocheats.launcher ]] && [[ ! -s $exeggcute ]] ;then
 fi
 
 # enable wooper monitor
-if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }' | awk '{ gsub(/ /,""); print }') == "true" ]] && [ -f $MODDIR/wooper_monitor.sh ] ;then
-  checkMonitor=$(pgrep -f $MODDIR/wooper_monitor.sh)
+if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }' | awk '{ gsub(/ /,""); print }') == "true" ]] && [ -f $MODDIR/wooper_gc_monitor.sh ] ;then
+  checkMonitor=$(pgrep -f $MODDIR/wooper_gc_monitor.sh)
   if [ -z $checkMonitor ] ;then
-    "$MODDIR/wooper_monitor.sh" >/dev/null 2>&1 &
-    echo "`date +%Y-%m-%d_%T` wooper.sh: wooper monitor enabled" >> $logfile
+    "$MODDIR/wooper_gc_monitor.sh" >/dev/null 2>&1 &
+    echo "`date +%Y-%m-%d_%T` wooper_gc.sh: wooper monitor enabled" >> $logfile
   fi
 fi
 

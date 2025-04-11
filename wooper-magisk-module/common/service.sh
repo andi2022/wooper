@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.0.1
+# version 1.0.2
 
 # Do NOT assume where your module will be located.
 # ALWAYS use $MODDIR if you need to know where this script
@@ -90,8 +90,20 @@ fi
 
 echo "`date +%Y-%m-%d_%T` ################ Boot completed ################" >> $logfile
 
-if [ -f "$MODDIR/wooper.sh" ]; then
+
+if [ "$mitm" == "gc" ]; then
+    if [ -f "$MODDIR/wooper.sh" ]; then
     sleep 20
     echo "`date +%Y-%m-%d_%T` Starting wooper.sh" >> $logfile
     "$MODDIR/wooper.sh" -ua
+    fi
+fi
+
+
+if [ -z "$mitm" ]; then
+    if [ -f "$MODDIR/wooper.sh" ]; then
+        sleep 20
+        echo "`date +%Y-%m-%d_%T` Starting wooper.sh" >> $logfile
+        "$MODDIR/wooper.sh" -ua
+    fi
 fi
