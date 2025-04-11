@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.0.10
+# version 2.0.11
 
 #Version checks
 VerService="1.0.3"
@@ -257,6 +257,10 @@ cleanup_old_wooper_scripts() {
   if [ -f "$MODDIR\wooper.sh" ]; then
     rm -f $MODDIR\wooper.sh
     logger "$MODDIR\wooper.sh removed"
+  fi
+  if [ -f "$MODDIR\wooper_new.sh" ]; then
+    rm -f $MODDIR\wooper_new.sh
+    logger "$MODDIR\wooper_new.sh removed"
   fi
   if [ -f "$MODDIR\wooper_monitor.sh" ]; then
     rm -f $MODDIR\wooper_monitor.sh
@@ -710,14 +714,14 @@ fi
 # check apk install settings
 check_apkinstall_settings
 
-# cleanup old wooper scripts
-cleanup_old_wooper_scripts
-
 # install or update adb_keys if config is enabled
   if [ "$adbfingerprint" = "true" ] ;then
   download_adb_keys
   copy_adb_keys_if_newer
   fi
+
+# cleanup old wooper scripts
+cleanup_old_wooper_scripts
 
 for i in "$@" ;do
     case "$i" in
