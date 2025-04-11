@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.1.1
+# version 2.1.2
 
 #Version checks
 VerService="1.0.3"
@@ -40,7 +40,7 @@ checklogfile
 android_version=`getprop ro.build.version.release | sed -e 's/\..*//'`
 appdir="/data/wooper"
 MODDIR="/data/adb/modules/wooper"
-exeggcute="/data/local/tmp/config.json"
+mitm_config="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
 service_config="/data/local/tmp/service.config"
 init_config="/data/local/tmp/init.config"
@@ -329,7 +329,7 @@ install_config(){
     until $download /data/local/tmp/config.json $wooper_url/gc_config.json || { echo "`date +%Y-%m-%d_%T` $download /data/local/tmp/config.json $wooper_url/gc_config.json" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download exeggcute config file failed, exit script" >> $logfile ; exit 1; } ;do
       sleep 2
     done
-    /system/bin/sed -i 's,dummy,'$device_name',g' $exeggcute
+    /system/bin/sed -i 's,dummy,'$device_name',g' $mitm_config
     logger "exeggcute config installed"
 }
 
@@ -369,7 +369,7 @@ update_all(){
     exeggcuteversions=$(/system/bin/grep 'exeggcute' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	  globalworkers=$(/system/bin/grep 'globalworkers' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
 	  workerscount=$(/system/bin/grep 'workerscount' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
-	  exeggcuteworkerscount=$(grep 'workers_count' $exeggcute | sed -r 's/^ [^:]*: ([0-9]+),?$/\1/')
+	  exeggcuteworkerscount=$(grep 'workers_count' $mitm_config | sed -r 's/^ [^:]*: ([0-9]+),?$/\1/')
     playintegrityfixinstalled=$(cat /data/adb/modules/playintegrityfix/module.prop | /system/bin/grep version | head -n1 | /system/bin/sed 's/ *version=v//')    
 	  playintegrityfixupdate=$(/system/bin/grep 'playintegrityfixupdate' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')	
 	  playintegrityfixversions=$(/system/bin/grep 'playintegrityfixversion' $wooper_versions | /system/bin/grep -v '_' | awk -F "=" '{ print $NF }')
@@ -448,7 +448,7 @@ update_all(){
 
     if [[ $globalworkers == "true" ]] && [ "$exeggcuteworkerscount" != "$workerscount" ] ;then
       logger "New global workers count detected, $exeggcuteworkerscount=>$workerscount"
-	  sed -i "s/\"workers_count\": [0-9]*/\"workers_count\": $workerscount/" $exeggcute
+	  sed -i "s/\"workers_count\": [0-9]*/\"workers_count\": $workerscount/" $mitm_config
 	  logger "New workers count $workerscount is active, restarting exeggcute"
 	  am force-stop com.gocheats.launcher
 	  sleep 2
@@ -695,7 +695,7 @@ if [[ $device_name != "" ]] ;then
 fi
 
 # check exeggcute config file exists
-if [[ -d /data/data/com.gocheats.launcher ]] && [[ ! -s $exeggcute ]] ;then
+if [[ -d /data/data/com.gocheats.launcher ]] && [[ ! -s $mitm_config ]] ;then
     download_versionfile
     install_config
     am force-stop com.gocheats.launcher
