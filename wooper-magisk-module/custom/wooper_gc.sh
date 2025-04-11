@@ -1,10 +1,10 @@
 #!/system/bin/sh
-# version 2.1.2
+# version 2.1.3
 
 #Version checks
 VerService="1.0.3"
 VerInit="1.0.1"
-VerMonitor="1.3.1"
+VerMonitor="1.3.2"
 
 logfile="/data/local/tmp/wooper.log"
 

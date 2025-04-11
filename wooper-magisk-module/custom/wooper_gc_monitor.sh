@@ -1,13 +1,13 @@
 #!/system/bin/sh
-# version 1.3.1
+# version 1.3.2
 
 logfile="/data/local/tmp/wooper_monitor.log"
 MODDIR="/data/adb/modules/wooper"
 tmp="/data/local/tmp"
-exeggcute="/data/local/tmp/config.json"
+mitm_config="/data/local/tmp/config.json"
 wooper_versions="/data/local/wooper_versions"
-origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
-rotom="$(grep rotom_url $exeggcute | cut -d \" -f 4)"
+origin=$(cat $mitm_config | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
+rotom="$(grep rotom_url $mitm_config | cut -d \" -f 4)"
 rotom_host="$(echo $rotom | cut -d / -f 3 | cut -d : -f 1)"
 rotom_port="$(echo $rotom | cut -d / -f 3 | cut -sd : -f 2)"  # if there is a manual port
 rotom_proto="$(echo $rotom | cut -d : -f 1)"
@@ -153,7 +153,7 @@ do
 		sleep 60
 	done
 
-	[[ -z $origin ]] && origin=$(cat $exeggcute | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
+	[[ -z $origin ]] && origin=$(cat $mitm_config | tr , '\n' | grep -w 'device_name' | awk -F "\"" '{ print $4 }')
 
         updatecheck=$(($updatecheck+1))
         if [[ $updatecheck -gt $update_check ]] ;then
