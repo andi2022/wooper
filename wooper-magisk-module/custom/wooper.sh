@@ -2,7 +2,7 @@
 # version 2.0.7
 
 #Version checks
-VerService="1.0.2"
+VerService="1.0.3"
 VerInit="1.0.1"
 VerMonitor="1.3.0"
 
