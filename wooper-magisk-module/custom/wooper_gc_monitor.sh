@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.2
+# version 1.3.3
 
 logfile="/data/local/tmp/wooper_monitor.log"
 MODDIR="/data/adb/modules/wooper"
@@ -57,7 +57,7 @@ exec 2>> $logfile
 # logger
 logger() {
 if [[ ! -z $discord_webhook ]] ;then
-  echo "`date +%Y-%m-%d_%T` wooper_monitor.sh: $1" >> $logfile
+  echo "`date +%Y-%m-%d_%T` wooper_gc_monitor.sh: $1" >> $logfile
   if [[ -z $origin ]] ;then
     curl -S -k -L --fail --show-error -F "payload_json={\"username\": \"wooper_monitor.sh\", \"content\": \" $1 \"}"  $discord_webhook &>/dev/null
   else
