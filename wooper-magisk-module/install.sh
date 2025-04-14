@@ -186,8 +186,11 @@ on_install() {
     sed -i "s|<SDCARD>|$SDCARD|g" $MODPATH/system/etc/mkshrc
     sed -i "s|<BIN>|$BIN|g" $MODPATH/system/etc/mkshrc
     sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/bashrc
-    sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/wooper.sh
-    sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/wooper_monitor.sh
+	sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/init.sh
+    sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/wooper_gc.sh
+    sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/wooper_gc_monitor.sh
+	sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/wooper_cosmog.sh
+    sed -i "s|<SDCARD>|$SDCARD|g" $TMPDIR/custom/wooper_cosmog_monitor.sh
 
     for filepath in $TMPDIR/custom/*; do
         filename=${filepath##*/}
@@ -199,10 +202,14 @@ on_install() {
     ui_print " >>> Installing Scripts..."
     cp -rf "$TMPDIR/custom/init.sh" "$MODPATH/init.sh"
     dos2unix "$MODPATH/init.sh"
-    cp -rf "$TMPDIR/custom/wooper.sh" "$MODPATH/wooper.sh"
-    dos2unix "$MODPATH/wooper.sh"
-    cp -rf "$TMPDIR/custom/wooper_monitor.sh" "$MODPATH/wooper_monitor.sh"
-    dos2unix "$MODPATH/wooper_monitor.sh"
+    cp -rf "$TMPDIR/custom/wooper_gc.sh" "$MODPATH/wooper_gc.sh"
+    dos2unix "$MODPATH/wooper_gc.sh"
+    cp -rf "$TMPDIR/custom/wooper_gc_monitor.sh" "$MODPATH/wooper_gc_monitor.sh"
+    dos2unix "$MODPATH/wooper_gc_monitor.sh"
+    cp -rf "$TMPDIR/custom/wooper_cosmog.sh" "$MODPATH/wooper_cosmog.sh"
+    dos2unix "$MODPATH/wooper_cosmog.sh"
+    cp -rf "$TMPDIR/custom/wooper_cosmog_monitor.sh" "$MODPATH/wooper_cosmog_monitor.sh"
+    dos2unix "$MODPATH/wooper_cosmog_monitor.sh"
     ui_print "================================================"
 }
 
