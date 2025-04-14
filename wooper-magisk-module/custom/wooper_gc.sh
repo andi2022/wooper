@@ -1,8 +1,8 @@
 #!/system/bin/sh
-# version 2.1.4
+# version 2.1.5
 
 #Version checks
-VerService="1.0.4"
+VerService="1.0.5"
 VerInit="1.0.1"
 VerMonitor="1.3.3"
 

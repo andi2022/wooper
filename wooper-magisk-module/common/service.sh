@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.0.4
+# version 1.0.5
 
 # Do NOT assume where your module will be located.
 # ALWAYS use $MODDIR if you need to know where this script
