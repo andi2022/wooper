@@ -104,7 +104,7 @@ if [ "$mitm" == "cosmog" ]; then
     if [ -f "$MODDIR/wooper_cosmog.sh" ]; then
     sleep 5
     echo "`date +%Y-%m-%d_%T` Starting wooper_cosmog.sh" >> $logfile
-    "$MODDIR/wooper_gc.sh" -ua
+    "$MODDIR/wooper_cosmog.sh" -ua
     exit 1
     fi
 fi
