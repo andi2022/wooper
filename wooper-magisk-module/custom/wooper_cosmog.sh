@@ -264,6 +264,33 @@ check_apkinstall_settings(){
   fi
 }
 
+opengl_warning() {
+  # Fetch OpenGL version and extract major version directly
+  opengl_version=$(dumpsys SurfaceFlinger | grep -o "OpenGL ES [0-9]*\.[0-9]*" | sed -n 's/OpenGL ES \([0-9]*\)\..*/\1/p')
+
+  # Check if major_version was successfully extracted
+  if [[ -z "$opengl_version" ]]; then
+      echo "`date +%Y-%m-%d_%T` wooper_cosmog.sh: [xml] failed to extract the OpenGL version."  >> $logfile
+      return 1
+  fi
+
+  # Compare the major version number
+  if [[ $opengl_version -ge 3 ]]; then
+      echo "`date +%Y-%m-%d_%T` wooper_cosmog.sh: [xml] opengl is 3+, skipping" >> $logfile
+  else
+      echo "`date +%Y-%m-%d_%T` wooper_cosmog.sh: [xml] OpenGL version is less than 3. Downloading XML file." >> $logfile
+
+      until /system/bin/curl -s -k -L --fail --show-error -o /data/local/tmp/warning.xml https://raw.githubusercontent.com/andi2022/wooper/$branch/warning.xml || { echo "`date +%Y-%m-%d_%T` Download OpenGL XML failed, exit script" >> $logfile ; exit 1; } ;do
+        sleep 2
+      done
+
+      # Push XML file to the device
+      chown root:root /data/local/tmp/warning.xml
+      mkdir -p /data/data/$pogo_package/shared_prefs/
+      cp /data/local/tmp/warning.xml /data/data/$pogo_package/shared_prefs/com.nianticproject.holoholo.libholoholo.unity.UnityMainActivity.xml
+  fi
+}
+
 update_all(){
     download_versionfile
     pinstalled=$(dumpsys package $pogo_package | /system/bin/grep versionName | head -n1 | /system/bin/sed 's/ *versionName=//')
@@ -422,6 +449,8 @@ update_all(){
               /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "$(date +%Y-%m-%d_%T) Install pogo failed, downgrade perhaps? Exit script" >> $logfile; exit 1; }
               /system/bin/rm -f /sdcard/Download/pogo.apk
           fi
+        # supress opengl warning (pink screen)
+        opengl_warning
         $mitm_startcmd
         logger "PoGo $pversions, launcher started"
         # restart wooper monitor
