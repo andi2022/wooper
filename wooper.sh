@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.7.23
+# version 1.7.24
 
 #Version checks
 Ver55wooper="1.2"
@@ -176,8 +176,8 @@ read_versionfile
 
 
 reboot_device(){
-    echo "`date +%Y-%m-%d_%T` Reboot device" >> $logfile
-    sleep 15
+    logger "Reboot device"
+    sleep 10
     /system/bin/reboot
 }
 
@@ -482,8 +482,8 @@ update_all(){
         magisk --sqlite "REPLACE INTO policies (uid,policy,until,logging,notification) VALUES($euid,2,0,1,1);"
         /system/bin/pm grant com.gocheats.launcher android.permission.READ_EXTERNAL_STORAGE
         /system/bin/pm grant com.gocheats.launcher android.permission.WRITE_EXTERNAL_STORAGE
-		    /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
-        logger "exeggcute updated, launcher started"
+        logger "exeggcute updated"
+        reboot=1
       fi
       if [ "$pogo_install" = "install" ] ;then
         logger "Start updating pogo"
@@ -500,18 +500,8 @@ update_all(){
             /system/bin/pm install -r /sdcard/Download/pogo.apk || { echo "`date +%Y-%m-%d_%T` Install pogo failed, downgrade perhaps? Exit script" >> $logfile ; exit 1; }
             /system/bin/rm -f /sdcard/Download/pogo.apk
           fi
-        /system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
-        logger "PoGo $pversions, launcher started"
-        # restart wooper monitor
-        if [[ $(grep useMonitor $wooper_versions | awk -F "=" '{ print $NF }') == "true" ]] && [ -f $appdir/wooper_monitor.sh ] ;then
-          checkMonitor=$(pgrep -f $appdir/wooper_monitor.sh)
-          if [ ! -z $checkMonitor ] ;then
-            kill -9 $checkMonitor
-            sleep 2
-            $appdir/wooper_monitor.sh >/dev/null 2>&1 &
-            logger "wooper monitor restarted after PoGo update"
-          fi
-        fi
+        logger "PoGo $pversions"
+        reboot=1
       fi
 	  if [ "$playintegrityfix_install" = "install" ] ;then
         logger "start updating playintegrityfix"
