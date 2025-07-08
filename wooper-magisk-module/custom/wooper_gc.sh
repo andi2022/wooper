@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.1.5
+# version 2.1.6
 
 #Version checks
 VerService="1.0.5"
@@ -58,6 +58,7 @@ if [ -f "$service_config" ]; then
   export wooper_url
   export wooper_user
   export wooper_pass
+  export redroid
   export workerscount_override
 fi
 
@@ -433,7 +434,7 @@ update_all(){
      echo "`date +%Y-%m-%d_%T` exeggcute already on correct version" >> $logfile
     fi
 
-    if [[ $playintegrityfixupdate == "true" ]] && [ "$playintegrityfixinstalled" != "$playintegrityfixversions" ] ;then
+    if [[ $playintegrityfixupdate == "true" && $redroid != "true"  ]] && [ "$playintegrityfixinstalled" != "$playintegrityfixversions" ] ;then
       logger "New PlayIntegrityFix version detected, $playintegrityfixinstalled=>$playintegrityfixversions"
       /system/bin/rm -f /sdcard/Download/playintegrityfix.zip
       until $download /sdcard/Download/playintegrityfix.zip $wooper_url/PlayIntegrityFix_v$playintegrityfixversions.zip || { echo "`date +%Y-%m-%d_%T` $download /sdcard/Download/playintegrityfix.zip $wooper_url/PlayIntegrityFix_v$playintegrityfixversions.zip" >> $logfile ; echo "`date +%Y-%m-%d_%T` Download PlayIntegrityFix failed, exit script" >> $logfile ; exit 1; } ;do
