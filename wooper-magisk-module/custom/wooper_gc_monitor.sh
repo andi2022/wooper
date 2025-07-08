@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.4
+# version 1.3.5
 
 logfile="/data/local/tmp/wooper_monitor.log"
 MODDIR="/data/adb/modules/wooper"
