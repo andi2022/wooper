@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 2.1.6
+# version 2.1.7
 
 #Version checks
 VerService="1.0.5"
@@ -195,9 +195,9 @@ if [[ ! -f $service_config ]] ;then
     echo "`date +%Y-%m-%d_%T` File $service_config not found, exit script" >> $logfile && exit 1
 else
     if [[ $wooper_user == "" ]] ;then
-        download="/system/bin/curl -s -k -L --fail --show-error -o"
+        download="curl -s -k -L --fail --show-error -o"
     else
-        download="/system/bin/curl -s -k -L --fail --show-error --user $wooper_user:$wooper_pass -o"
+        download="curl -s -k -L --fail --show-error --user $wooper_user:$wooper_pass -o"
     fi
 fi
 
@@ -280,7 +280,7 @@ fi
 
 
 	# install wooper monitor
-	until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
+	until curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc_monitor.sh failed, exit script" >> $logfile ; exit 1; } ;do
 		sleep 2
 	done
 	chmod +x $MODDIR/wooper_gc_monitor.sh
@@ -603,7 +603,7 @@ download_versionfile
 if [[ $(basename $0) = "wooper_gc_new.sh" ]]; then
   [ -f $MODDIR/service.sh ] && oldService=$(head -3 $MODDIR/service.sh | grep -i '# version' | awk '{ print $NF }') || oldService="0"
   if [ $VerService != $oldService ]; then
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/service.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/common/service.sh || { echo "`date +%Y-%m-%d_%T` Download service.sh failed, exit script" >> $logfile ; exit 1; }; do
+    until curl -s -k -L --fail --show-error -o $MODDIR/service.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/common/service.sh || { echo "`date +%Y-%m-%d_%T` Download service.sh failed, exit script" >> $logfile ; exit 1; }; do
       sleep 2
     done
     chmod +x $MODDIR/service.sh
@@ -617,7 +617,7 @@ fi
 if [[ $(basename $0) = "wooper_gc_new.sh" ]]; then
   [ -f $MODDIR/init.sh ] && oldInit=$(head -3 $MODDIR/init.sh | grep -i '# version' | awk '{ print $NF }') || oldInit="0"
   if [ $VerInit != $oldInit ]; then
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/init.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/init.sh || { echo "`date +%Y-%m-%d_%T` Download init.sh failed, exit script" >> $logfile ; exit 1; }; do
+    until curl -s -k -L --fail --show-error -o $MODDIR/init.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/init.sh || { echo "`date +%Y-%m-%d_%T` Download init.sh failed, exit script" >> $logfile ; exit 1; }; do
       sleep 2
     done
     chmod +x $MODDIR/init.sh
@@ -630,7 +630,7 @@ fi
 #download latest wooper_gc.sh
 if [[ $(basename $0) != "wooper_gc_new.sh" ]] ;then
     oldsh=$(head -2 $MODDIR/wooper_gc.sh | /system/bin/grep '# version' | awk '{ print $NF }')
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc.sh failed, exit script" >> $logfile ; exit 1; } ;do
+    until curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_new.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc.sh failed, exit script" >> $logfile ; exit 1; } ;do
         sleep 2
     done
     chmod +x $MODDIR/wooper_gc_new.sh
@@ -649,7 +649,7 @@ fi
 if [[ $(basename $0) = "wooper_gc_new.sh" ]]; then
   [ -f $MODDIR/wooper_gc_monitor.sh ] && oldMonitor=$(head -2 $MODDIR/wooper_gc_monitor.sh | grep '# version' | awk '{ print $NF }') || oldMonitor="0"
   if [ $VerMonitor != $oldMonitor ]; then
-    until /system/bin/curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc_monitor.sh failed, exit script" >> $logfile ; exit 1; }; do
+    until curl -s -k -L --fail --show-error -o $MODDIR/wooper_gc_monitor.sh https://raw.githubusercontent.com/andi2022/wooper/$branch/wooper-magisk-module/custom/wooper_gc_monitor.sh || { echo "`date +%Y-%m-%d_%T` Download wooper_gc_monitor.sh failed, exit script" >> $logfile ; exit 1; }; do
       sleep 2
     done
     chmod +x $MODDIR/wooper_gc_monitor.sh
