@@ -1,7 +1,6 @@
 id=wooper
 name=Wooper
 version=v1.0.1
-versionCode=10000
+versionCode=101
 author=andi2022
 description=wooper and useful binaries
-minMagisk=23000
