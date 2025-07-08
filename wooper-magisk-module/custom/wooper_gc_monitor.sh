@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# version 1.3.3
+# version 1.3.4
 
 logfile="/data/local/tmp/wooper_monitor.log"
 MODDIR="/data/adb/modules/wooper"
@@ -121,7 +121,7 @@ stop_start_exeggcute () {
 	am force-stop $pogo_package &  rm -rf /data/data/$pogo_package/cache/* & am force-stop com.gocheats.launcher
 	sleep 5
 	[[ $debug == "true" ]] && echo "`date +%Y-%m-%d_%T` [MONITORBOT] Start exeggcute launcher" >> $logfile
-	/system/bin/monkey -p com.gocheats.launcher 1 > /dev/null 2>&1
+	am start -n com.gocheats.launcher/.MainActivity
 	sleep 1
 }
 
